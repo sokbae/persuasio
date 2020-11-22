@@ -22,7 +22,7 @@ clear
 cap log close
 set more off
 
-cd /Users/sokbaelee/Dropbox/Persuasion/STATAcodes
+cd /Users/sokbaelee/Dropbox/Persuasion/STATAcodes/persuasio
 log using persuasion_GKB_example, replace
 
 use GKB, clear
@@ -36,13 +36,13 @@ global covariates "MBfemale Mreportedage MZBfemale MZreportedage MZBvoted2004 MZ
 **** Part I: Lower Bound on Average Persuation Rate *****
 *********************************************************
 
-persuasio_yz voteddem_all post, level(80) method("normal") title("w/o covariates: normal")
+persuasionyz voteddem_all post, level(80) method("normal") title("w/o covariates: normal")
 
-persuasio_yz voteddem_all post, level(80) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
+persuasionyz voteddem_all post, level(80) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
 
-persuasio_yz voteddem_all post, level(90) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
+persuasionyz voteddem_all post, level(90) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
 
 tab cells, generate(cell_indicators)
 
-persuasio_yz voteddem_all post $covariates doperator* cell_indicators*, level(80) nboot(1000) method("bootstrap") title("w covariates: bootstrap")
+persuasionyz voteddem_all post $covariates doperator* cell_indicators*, level(80) nboot(1000) method("bootstrap") title("w covariates: bootstrap")
 
