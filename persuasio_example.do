@@ -15,7 +15,7 @@
 * We would like to thank the authors of the original study 
 * to make their data available online. 
 *
-* Modified on 22 November 2020
+* Modified on 23 November 2020
 ******************************************************************************* 
 
 clear
@@ -36,13 +36,11 @@ global covariates "MBfemale Mreportedage MZBfemale MZreportedage MZBvoted2004 MZ
 **** Part I: Lower Bound on Average Persuation Rate *****
 *********************************************************
 
-persuasionyz voteddem_all post, level(80) method("normal") title("w/o covariates: normal")
+cipe4yz voteddem_all post, level(80) method("normal") title("w/o covariates: normal")
 
-persuasionyz voteddem_all post, level(80) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
-
-persuasionyz voteddem_all post, level(90) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
+cipe4yz voteddem_all post, level(80) method("bootstrap") nboot(1000) title("w/o covariates: bootstrap")
 
 tab cells, generate(cell_indicators)
 
-persuasionyz voteddem_all post $covariates doperator* cell_indicators*, level(80) nboot(1000) method("bootstrap") title("w covariates: bootstrap")
+cipe4yz voteddem_all post $covariates, level(80) nboot(1000) method("bootstrap") title("w covariates: bootstrap")
 

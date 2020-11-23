@@ -2,70 +2,84 @@
 
 _version 0.1.0_ 
 
-aprlb
-======
+Title
+-----
 
-Estimates the lower bound on the average persuasion rate
+{phang}{cmd:aprlb} {hline 2} Estimates the lower bound on the average persuasion rate
 
-Syntax 
+Syntax
 ------
 
-> __aprlb__ _varlist_ [_if_] [_in_] [, _title(string)_]
+> {cmd:aprlb} _depvar_ _instrvar_ [_covariates_] [_if_] [_in_] [, {cmd:model}(_string_) {cmd:title}(_string_)]
 
 ### Options
 
 | _option_          | _Description_           | 
 |-------------------|-------------------------|
-| _title(string)_   | Title of estimation     |
+| {cmd:model}(_string_)   | Regression model when _covariates_ are present; default is "no_interaction" |
+| {cmd:title}(_string_)   | Title of estimation     |
 
 
 Description
 -----------
 
-Estimates the lower bound on the average persuation rate (APR). 
+__aprlb__ estimates the lower bound on the average persuation rate (APR).
+_varlist_ should include _depvar_ _instrvar_ _covariates_ in order.
+Here, _depvar_ is binary outcomes (_y_), _instrvar_ is binary instruments (_z_), 
+and _covariates_ (_x_) are optional. 
 
-_varlist_ should include _y_ _z_ _x_ in order.
+There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-Here, _y_ is binary outcomes, _z_ is binary treatment and _x_ is optional covariates. 
+- If _covariates_ are absent, the lower bound (theta_L) on the APR is defined by 
 
-There are two cases: (i) _x_ is absent and (ii) _x_ is present.
-
-- If _x_ is absent, the lower bound (theta) on the APR is defined by 
-
-	theta = {Pr( _y_ = 1 | _z_ = 1 ) - Pr( _y_ = 1 | _z_ = 0 )}/{1 - Pr( _y_ = 1 | _z_ = 0 )}.
+	theta_L = {Pr( _y_ = 1 | _z_ = 1 ) - Pr( _y_ = 1 | _z_ = 0 )}/{1 - Pr( _y_ = 1 | _z_ = 0 )}.
 
 	The estimate and its standard error are obtained by the following procedure:
 	
 	1. Pr( _y_ = 1 | _z_ = 1 ) and Pr( _y_ = 1 | _z_ = 0 ) are estimated by regressing _y_ on _z_.
 	2. The lower bound on the APR is computed using the estimates obtained above.
-	3. The standard error of the estimate is computed via command __nlcom__. 
+	3. The standard error of the estimate is computed via STATA command __nlcom__. 
 
-- If _x_ is present, the lower bound (theta) on the APR is defined by 
+- If _covariates_ are present, the lower bound (theta_L) on the APR is defined by 
 
-	theta(x) = {Pr( _y_ = 1 | _z_ = 1, _x_ ) - Pr( _y_ = 1 | _z_ = 0, _x_ )}/{1 - Pr( _y_ = 1 | _z_ = 0, _x_ )},
+	theta_L = E [ theta_L(x) ],
 	
-	theta = E [ theta(x) ].
+	where
+
+	theta_L(x) = {Pr( _y_ = 1 | _z_ = 1, _x_ ) - Pr( _y_ = 1 | _z_ = 0, _x_ )}/{1 - Pr( _y_ = 1 | _z_ = 0, _x_ )}.
 	
-	The estimate is obtained by the following procedure:
+	The estimate is obtained by the following procedure.
 	
-	1. Pr( _y_ = 1 | _z_ = 1, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 1.
-	2. Pr( _y_ = 1 | _z_ = 0, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 0.
-	3. For each x in the estimation sample, theta(x) is computed using the estimates obtained above.
-	4. The estimates of theta(x) are averaged to obtain the estimate of theta.
+	If {cmd:model}("no_interaction") is selected (default choice),
 	
-	In this case, the standard error is missing because an analytic formula for the standard error is complex. 
+	1. Pr( _y_ = 1 | _z_ , _x_ ) is estimated by regressing _y_ on _z_ and _x_.
 	
-	Bootstrap inference will be implemented when command __persuasionyz__ is called to conduct inference. 
+	Alternatively, if {cmd:model}("interaction") is selected,
+	
+	1a. Pr( _y_ = 1 | _z_ = 1, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 1.
+	1b. Pr( _y_ = 1 | _z_ = 0, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 0.
+	
+	Ater step 1, both options are followed by:
+	
+	2. For each x in the estimation sample, theta_L(x) is computed using the estimates obtained above.
+	3. The estimates of theta_L(x) are averaged to obtain the estimate of theta_L.
+	
+	When _covariates_ are present, the standard error is missing because an analytic formula for the standard error is complex.
+	Bootstrap inference is implemented when this package's command __persuasio__ is called to conduct inference. 
 	
 Options
 -------
 
-_title(string)_ specifies the title of estimation.
+{cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_ when _covariates_ are present. 
+
+The default option is "no_interaction" between _z_ and _x_. When "interaction" is selected, full interactions between _z_ and _x_ are allowed; this is accomplished by estimating Pr( _y_ = 1 | _z_ = 1, _x_ ) and Pr( _y_ = 1 | _z_ = 0, _x_ ), separately.
+
+{cmd:title}(_string_) specifies the title of estimation.
 
 Remarks
 -------
 
-It is recommended to use command __persuasionyz__ instead of calling __aprlb__ directly.
+It is recommended to use this package's command __persuasio__ instead of calling __aprlb__ directly.
 
 Examples 
 --------
@@ -82,7 +96,7 @@ The second example adds covariates.
 
 		. aprlb voteddem_all post doperator*
 
-Stored results 
+Stored results
 --------------
 
 ### Scalars
@@ -92,7 +106,7 @@ Stored results
 > __e(lb_se)__: standard error of the lower bound on the average persuasion rate
 
 
-### Matrices
+### Macros
 
 > __e(outcomes)__: variable name of the binary outcome variable
 
@@ -101,31 +115,32 @@ Stored results
 > __e(covariates)__: variable name(s) of the covariates if they exist
 
 
-Authors 
+Authors
 -------
 
 Sung Jae Jun, Penn State University, <sjun@psu.edu> 
 
 Sokbae Lee, Columbia University, <sl3841@columbia.edu>
 
-License 
+License
 -------
 
 GPL-3
 
-References 
+References
 ----------
 
-Sung Jae Jun and Sokbae Lee (2019), Identifying the Effect of Persuasion, 
+Sung Jae Jun and Sokbae Lee (2019), 
+Identifying the Effect of Persuasion, 
 [arXiv:1812.02276 [econ.EM]](https://arxiv.org/abs/1812.02276) 
 
 ***/
-*! version 0.1.0 Simon Lee 22Nov2020
+capture program drop aprlb
 program aprlb, eclass
 
 	version 14.2
 	
-	syntax varlist [if] [in] [, title(string)]
+	syntax varlist (min=2) [if] [in] [, model(string) title(string)]
 	
 	marksample touse
 	
@@ -149,14 +164,33 @@ program aprlb, eclass
 	* if there are covariates (X)
 	if "`X'" != "" {
 	
-	tempvar yhat1 yhat0 thetahat_num thetahat_den thetahat
+	tempvar yhat yhat1 yhat0 thetahat_num thetahat_den thetahat
+	
+		if "`model'" == "" | "`model'" == "no_interaction" { 
+	
+		quietly reg `Y' `Z' `X' if `touse', robust
 		
-	quietly reg `Y' `X' if `Z'==1 & `touse', robust
-	quietly predict `yhat1' if `touse'
+		tempname bhat b_coef
+		
+		matrix `bhat' = e(b)
+		scalar `b_coef' = `bhat'[1,1]
+		
+		quietly predict `yhat' if `touse'
+		
+		gen `yhat1' = `yhat' + `b_coef' - `b_coef'*`Z'
+		gen `yhat0' = `yhat' - `b_coef'*`Z'
 	
-	quietly reg `Y' `X' if `Z'==0 & `touse', robust
-	quietly predict `yhat0' if `touse'
+		}
+		
+		if "`model'" == "interaction" { 
 	
+		quietly reg `Y' `X' if `Z'==1 & `touse', robust
+		quietly predict `yhat1' if `touse'
+	
+		quietly reg `Y' `X' if `Z'==0 & `touse', robust
+		quietly predict `yhat0' if `touse'
+		}
+		
 	quietly replace `yhat1' = min(max(`yhat1',0),1)
 	quietly replace `yhat0' = min(max(`yhat0',0),1)
 
