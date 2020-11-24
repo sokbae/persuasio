@@ -101,6 +101,8 @@ Stored results
 
 ### Scalars
 
+> __e(N)__: sample size
+
 > __e(lb_coef)__: estimate of the lower bound on the average persuasion rate
 
 > __e(lb_se)__: standard error of the lower bound on the average persuasion rate
@@ -108,11 +110,17 @@ Stored results
 
 ### Macros
 
-> __e(outcomes)__: variable name of the binary outcome variable
+> __e(outcome)__: variable name of the binary outcome variable
 
 > __e(instrument)__: variable name of the binary instrumental variable 
 
 > __e(covariates)__: variable name(s) of the covariates if they exist
+
+> __e(model)__: regression model specification ("no_interaction" or "interaction")
+
+### Functions:
+
+> __e(sample)__: 1 if the observations are used for estimation, and 0 otherwise. 
 
 
 Authors
@@ -146,18 +154,58 @@ program aprlb, eclass
 	
 	gettoken Y varlist_without_Y : varlist
 	gettoken Z X : varlist_without_Y
-
+	
+	quietly levelsof `Y'
+	if "`r(levels)'" != "0 1" {
+	
+	display "`Y' is not a 0/1 variable"
+	error 450	
+	}
+	
+	quietly levelsof `Z'
+	if "`r(levels)'" != "0 1" {
+	
+	display "`Z' is not a 0/1 variable"
+	error 450
+	}
+	
+	display " "
+	display as text "{hline 65}"
+	display "{bf:aprlb:} Estimating the Lower Bound on the Average Persuasion Rate"
+	display as text "{hline 65}"
+	display " "
+	display " - Binary outcome: `Y'"
+	display " - Binary instrument: `Z'"
+	display " - Covariates (if exist): `X'"
+    display " "
+	
 	* if there are no covariates (X) 
 	if "`X'" == "" { 
 	
 	quietly reg `Y' `Z' if `touse', robust	
+	local nobs = e(N)
 	
-	quietly nlcom _b[`Z']/(1-_b[_cons])	 
-
-	matrix lower_bound_est = r(b)
-	matrix lower_bound_avar = r(V)
-	scalar lower_bound_coef = lower_bound_est[1,1]
-	scalar lower_bound_se = sqrt(lower_bound_avar[1,1])
+	quietly nlcom lower_bound:_b[`Z']/(1-_b[_cons])
+				
+    tempname b V lb se
+	
+	matrix `b' = r(b)
+	matrix `V' = r(V)	
+	scalar `lb' = `b'[1,1]
+	scalar `se' = sqrt(`V'[1,1])
+	
+	ereturn post `b' `V', obs(`nobs') esample(`touse')
+	ereturn display, nopv	
+	
+	display " "
+	display "Note: It is recommended to use {bf:persuasio} for causal inference."
+    display " "
+	
+	ereturn scalar lb_coef = `lb'
+    ereturn scalar lb_se = `se'
+    ereturn local outcome `Y'
+    ereturn local instrument `Z'
+    ereturn local covariates `X'
 		
 	}
 	
@@ -200,16 +248,36 @@ program aprlb, eclass
 	gen `thetahat' = `thetahat_num'/`thetahat_den'
     
 	quietly sum `thetahat' if `touse'
-	scalar lower_bound_coef = r(mean)
-	scalar lower_bound_se = .
+	
+	tempname lower_bound_coef lower_bound_se
+	
+	local nobs = r(N)
+	
+	tempname b lb se
+	
+	scalar `lb' = r(mean)
+	scalar `se' = .
+		
+	matrix `b' = r(mean)
+	matrix colnames `b' = lower_bound
+	
+    ereturn post `b', obs(`nobs') esample(`touse')
+	ereturn display, nopv	
+	
+	display " "
+	display "Notes: It is recommended to use {bf:persuasio} for causal inference."
+	display "       Standard errors are missing if covariates are present."
+    display " "
+	
+	ereturn scalar lb_coef = `lb'
+    ereturn scalar lb_se = `se'
+    ereturn local outcome `Y'
+    ereturn local instrument `Z'
+    ereturn local covariates `X'
+	ereturn local model `model'
 	
 	}
 	
-	ereturn clear
-	ereturn scalar lb_coef = lower_bound_coef
-	ereturn scalar lb_se = lower_bound_se
-	ereturn local outcomes `Y'
-	ereturn local instrument `Z'
-	ereturn local covariates `X'
+	display "Reference: Jun and Lee (2019), arXiv:1812.02276 [econ.EM]"
 
 end

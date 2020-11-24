@@ -175,7 +175,7 @@ program persuasio4yz, eclass
 	
 	syntax varlist (min=2) [if] [in] [, level(cilevel) model(string) method(string) nboot(numlist >0 integer) title(string)]
 		
-	aprlb `varlist' `if' `in', model("`model'")
+	quietly aprlb `varlist' `if' `in', model("`model'")
 	
 	* displaying results
 	if "`title'" != "" {
@@ -183,11 +183,9 @@ program persuasio4yz, eclass
 	display "`title':"
     
 	}
-		
-	display "--- Estimating Average Persuation Rate (APR) ---"
-	display "The estimated lower bound on the APR is:"	
-    display e(lb_coef)	
-	scalar lb_coef = e(lb_coef)
+	
+	tempname lb_coef
+	scalar `lb_coef' = e(lb_coef)
 	
 	* inference based on normal approximation
 	if "`method'" == "" | "`method'" == "normal" { 
@@ -199,22 +197,63 @@ program persuasio4yz, eclass
 		local alpha_level = 0.95
 		}
 		
-		scalar cv_cns = invnormal(`alpha_level')   /* one-sided critical value */
-		scalar lower_bound_ci = e(lb_coef) - cv_cns*e(lb_se)
+		tempname cv_cns lower_bound_ci
+		scalar `cv_cns' = invnormal(`alpha_level')   /* one-sided critical value */
+		scalar `lower_bound_ci' = e(lb_coef) - `cv_cns'*e(lb_se)
 		
-		display "--- Inference Based on Normal Approximation ---"
-		display "The standard error of the lower bound on the APR is:"
-		display e(lb_se)
+		* Displaying results
+	    display " "
+		display as text "{hline 65}"
+		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
+		display " when binary outcomes and binary instruments are observed"
+		display as text "{hline 65}"
+		display " "
+		if "`title'" != "" {
+		display "Title: `title'"
+		}
+		display " - Binary outcome: `e(outcome)'"
+		display " - Binary instrument: `e(instrument)'"
+		display " "
+		display as text "{hline 13}{c TT}{hline 40}"
+
+		display as text %12s  "Parameter" " {c |}" /*
+		*/ _col(16) " Estimate " /*
+		*/ _col(30) "[`level'% Conf. Interval]" 
+        display as text "{hline 13}{c +}{hline 40}"
+	    
+		display as text %12s "theta_L" " {c |}" /*
+		*/ as result /*
+		*/ _col(17) %8.0g `lb_coef' " " /*
+		*/ _col(32) %8.0g `lower_bound_ci' " " /*
+		*/ %8.0g 1 " "
 		
-		display "The left-end point of the confidence interval for the lower bound on the APR is:"
-		display lower_bound_ci
-	    display "(Note. The one-sided nominal coverage probability is " `alpha_level' ")"  
-        display "------------------------------------------------" 
+		display as text "{hline 13}{c BT}{hline 40}"
+
+		display " "
+		display "Note: `level'% one-sided conf. interval is based on normal approximation."
+		display " "
 	
 	}
 	
 	* inference based on bootstrap
 	if "`method'" == "bootstrap" { 
+	
+	    * Displaying results
+	    display " "
+		display as text "{hline 65}"
+		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
+		display " when binary outcomes and binary instruments are observed"
+		display " along with covariates"
+		display as text "{hline 65}"
+		display " "
+		if "`title'" != "" {
+		display "Title: `title'"
+		}
+		display " - Binary outcome: `e(outcome)'"
+		display " - Binary instrument: `e(instrument)'"
+		display " - Covariates (if exist): `e(covariates)'"
+		display " - Regression model (if specified): `e(model)'"
+		display " "
 	
 		if "`level'" != "" {	
 		local alpha_level = `level'/100
@@ -233,25 +272,46 @@ program persuasio4yz, eclass
 			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `varlist' `if' `in', model("`model'")
 			
 		}
-			
-		matrix bs_ci_percentile = e(ci_percentile)
-		scalar lower_bound_ci = bs_ci_percentile[1,1] 
+		
+		tempname bs_ci_percentile lower_bound_ci
+		matrix `bs_ci_percentile' = e(ci_percentile)
+		scalar `lower_bound_ci' = `bs_ci_percentile'[1,1] 
 
-		display "--- Inference Based on Bootstrap ---"
-		display "The left-end point of the percentile bootstrap confidence interval for the lower bound on the APR is:"
-		display lower_bound_ci
-	    display "(Note. the one-sided nominal coverage probability is: " `alpha_level' ")"  
-        display "------------------------------------------------" 	
+		* Displaying results further
+		display " "
+		display as text "{hline 13}{c TT}{hline 40}"
+
+		display as text %12s  "Parameter" " {c |}" /*
+		*/ _col(16) " Estimate " /*
+		*/ _col(30) "[`level'% Conf. Interval]" 
+        display as text "{hline 13}{c +}{hline 40}"
+	    
+		display as text %12s "theta_L" " {c |}" /*
+		*/ as result /*
+		*/ _col(17) %8.0g `lb_coef' " " /*
+		*/ _col(32) %8.0g `lower_bound_ci' " " /*
+		*/ %8.0g 1 " "
+		
+		display as text "{hline 13}{c BT}{hline 40}"
+
+		display " "
+		display "Note: `level'% one-sided conf. interval is based on percentile bootstrap."
+		display " "
+	
 	}
 	
-	matrix lb_coef_matrix = (lb_coef,1)
-	matrix lb_ci_matrix = (lower_bound_ci,1)
+	tempname lb_coef_matrix lb_ci_matrix
+	
+	matrix `lb_coef_matrix' = (`lb_coef',1)
+	matrix `lb_ci_matrix' = (`lower_bound_ci',1)
 	
 	ereturn clear
-	ereturn matrix lb_est = lb_coef_matrix
-	ereturn matrix lb_ci = lb_ci_matrix
+	ereturn matrix lb_est = `lb_coef_matrix'
+	ereturn matrix lb_ci = `lb_ci_matrix'
 	ereturn local cilevel = `alpha_level'*100
 	ereturn local inference_method "`method'"
+	
+	display "Reference: Jun and Lee (2019), arXiv:1812.02276 [econ.EM]"
 	
 end
 

@@ -122,6 +122,8 @@ The second example adds covariates.
 
 {p 4 4 2}{bf:Scalars}
 
+{p 8 8 2} {bf:e(N)}: sample size
+
 {p 8 8 2} {bf:e(lb_coef)}: estimate of the lower bound on the average persuasion rate
 
 {p 8 8 2} {bf:e(lb_se)}: standard error of the lower bound on the average persuasion rate
@@ -129,11 +131,17 @@ The second example adds covariates.
 
 {p 4 4 2}{bf:Macros}
 
-{p 8 8 2} {bf:e(outcomes)}: variable name of the binary outcome variable
+{p 8 8 2} {bf:e(outcome)}: variable name of the binary outcome variable
 
 {p 8 8 2} {bf:e(instrument)}: variable name of the binary instrumental variable 
 
 {p 8 8 2} {bf:e(covariates)}: variable name(s) of the covariates if they exist
+
+{p 8 8 2} {bf:e(model)}: regression model specification ("no_interaction" or "interaction")
+
+{p 4 4 2}{bf:Functions:}
+
+{p 8 8 2} {bf:e(sample)}: 1 if the observations are used for estimation, and 0 otherwise. 
 
 
 
