@@ -17,83 +17,99 @@ Syntax
 | _option_          | _Description_           | 
 |-------------------|-------------------------|
 | {cmd:level}(#) | Set confidence level; default is {cmd:level}(95) |
-| {cmd:model}(_string_)   | Regression model when _covariates_ are present; default is "no_interaction" |
+| {cmd:model}(_string_)   | Regression model when _covariates_ are present |
 | {cmd:method}(_string_) | Inference method; default is {cmd:method}("normal")    |
-| {cmd:nboot}(#) | Perform # bootstrap replications; default is {cmd:nboot}(50) |
+| {cmd:nboot}(#) | Perform # bootstrap replications |
 | {cmd:title}(_string_) | Title of estimation     |
 
 Description
 -----------
 
-{cmd:persuasio4yz} conducts causal inference on persuasive effects for binary outcomes _y_ and binary instruments _z_. 
+{cmd:persuasio4yz} conducts causal inference on persuasive effects
 
-This command is for the case when persuasive treatment (_t_) is unobserved, using estimates of the lower bound on the average persuation rate (APR) via this package's command {cmd:aprlb}.
+It is assumed that binary outcomes _y_ and binary instruments _z_ are observed. 
+This command is for the case when persuasive treatment (_t_) is unobserved, 
+using estimates of the lower bound on the average persuation rate (APR) via 
+this package's command {cmd:aprlb}.
 
 _varlist_ should include _depvar_ _instrvar_ _covariates_ in order. Here, _depvar_ is binary outcomes (_y_), _instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
 
-When treatment _t_ is unobserved, the upper bound on the APR is just 1. 
+When treatment _t_ is unobserved, the upper bound on the APR is simply 1. 
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _covariates_ are absent, the lower bound (theta_L) on the APR is defined by 
+- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-	theta_L = {Pr( _y_ = 1 | _z_ = 1 ) - Pr( _y_ = 1 | _z_ = 0 )}/{1 - Pr( _y_ = 1 | _z_ = 0 )}.
+	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 	The estimate and confidence interval are obtained by the following procedure:
 	
-	1. Pr( _y_ = 1 | _z_ = 1 ) and Pr( _y_ = 1 | _z_ = 0 ) are estimated by regressing _y_ on _z_.
-	2. The lower bound on the APR is computed using the estimates obtained above.
-	3. The standard error of the estimate is computed via STATA command {cmd:nlcom}.
-	4. Then, a confidence interval for the APR is set by [ _est_ - _cv_ * _se_ , 1 ], 
-	   where _est_ is the estimate, _se_ is the standard error, and
-	   _cv_ is the one-sided standard normal critical value (e.g., _cv_ = 1.645 for {cmd:level}(95)).
-	
-- If _covariates_ are present, the lower bound (theta_L) on the APR is defined by 
+1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing _y_ on _z_.
+2. {cmd:theta_L} is computed using the estimates obtained above.
+3. The standard error is computed via STATA command __nlcom__. 
+4. Then, a confidence interval for the APR is set by 
 
-	theta_L = E [ theta_L(x) ],
+{p 8 8 2}		[ _est_ - _cv_ * _se_ , 1 ],
+	
+where _est_ is the estimate, _se_ is the standard error, and _cv_ is the one-sided standard normal critical value (e.g., _cv_ = 1.645 for {cmd:level}(95)).
+	
+- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+
+	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
 	where
 
-	theta_L(x) = {Pr( _y_ = 1 | _z_ = 1, _x_ ) - Pr( _y_ = 1 | _z_ = 0, _x_ )}/{1 - Pr( _y_ = 1 | _z_ = 0, _x_ )}.
+	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 		
-	The estimate and confidence interval are obtained by the following procedure.
+The estimate is obtained by the following procedure.
 	
-	If {cmd:model}("no_interaction") is selected (default choice),
+If {cmd:model}("no_interaction") is selected (default choice),
 	
-	1. Pr( _y_ = 1 | _z_ , _x_ ) is estimated by regressing _y_ on _z_ and _x_.
+1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing _y_ on _z_ and _x_.
 	
-	Alternatively, if {cmd:model}("interaction") is selected,
+Alternatively, if {cmd:model}("interaction") is selected,
 	
-	1a. Pr( _y_ = 1 | _z_ = 1, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 1.
-	1b. Pr( _y_ = 1 | _z_ = 0, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 0.
+1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 1.
+1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 0.
 	
-	Ater step 1, both options are followed by:
+Ater step 1, both options are followed by:
 	
-	2. For each x in the estimation sample, theta_L(x) is computed using the estimates obtained above.
-	3. The estimates of theta_L(x) are averaged to obtain the estimate of theta_L.
-	4. A bootstrap confidence interval for the APR is set by [ bs_est(_alpha_) , 1 ],
-	   where bs_est(_alpha_) is the _alpha_ quantile of the bootstrap estimates of theta_L
-	   and 1 - _alpha_ is the confidence level.  
+2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
+3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
+4. A bootstrap confidence interval for the APR is set by 
+
+{p 8 8 2}		[ bs_est(_alpha_) , 1 ],
+		
+where bs_est(_alpha_) is the _alpha_ quantile of the bootstrap estimates of {cmd:theta_L}
+and 1 - _alpha_ is the confidence level.  
 	
-	The bootstrap procedure is implemented via STATA command {cmd:bootstrap}. 
+The bootstrap procedure is implemented via STATA command {cmd:bootstrap}. 
 		
 Options
 -------
 
-{cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_ when _covariates_ are present. 
+{cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-The default option is "no_interaction" between _z_ and _x_. When "interaction" is selected, full interactions between _z_ and _x_ are allowed; this is accomplished by estimating Pr( _y_ = 1 | _z_ = 1, _x_ ) and Pr( _y_ = 1 | _z_ = 0, _x_ ), separately.
+This option is only releveant when _x_ is present.
+The default option is "no_interaction" between _z_ and _x_. 
+When "interaction" is selected, full interactions between _z_ and _x_ are allowed; 
+this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
 
 {cmd:level}(#) sets confidence level; default is {cmd:level}(95). 
 
-{cmd:method}(_string_) refers the method for inference; default is {cmd:method}("normal").
+{cmd:method}(_string_) refers the method for inference.
+
+The default option is {cmd:method}("normal").
 By the naure of identification, one-sided confidence intervals are produced. 
 
-	1. When _covariates_ are present, it needs to be set as {cmd:method}("bootstrap"); otherwise, the confidence interval will be missing.
+{p 4 8 2}1. When _x_ are present, it needs to be set as {cmd:method}("bootstrap"); 
+otherwise, the confidence interval will be missing.
 	
-	2. When _covariates_ are absent, both options "normal" and "bootstrap" yield non-missing confidence intervals.
+{p 4 8 2}2. When _x_ are absent, both options yield non-missing confidence intervals.
 	
-{cmd:nboot}(#) chooses the number of bootstrap replications; default is {cmd:nboot}(50).
+{cmd:nboot}(#) chooses the number of bootstrap replications.
+
+The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
 {cmd:title}(_string_) specifies the title of estimation.
@@ -221,7 +237,7 @@ program persuasio4yz, eclass
 		*/ _col(30) "[`level'% Conf. Interval]" 
         display as text "{hline 13}{c +}{hline 40}"
 	    
-		display as text %12s "theta_L" " {c |}" /*
+		display as text %12s "{cmd:theta_L}" " {c |}" /*
 		*/ as result /*
 		*/ _col(17) %8.0g `lb_coef' " " /*
 		*/ _col(32) %8.0g `lower_bound_ci' " " /*
@@ -286,7 +302,7 @@ program persuasio4yz, eclass
 		*/ _col(30) "[`level'% Conf. Interval]" 
         display as text "{hline 13}{c +}{hline 40}"
 	    
-		display as text %12s "theta_L" " {c |}" /*
+		display as text %12s "{cmd:theta_L}" " {c |}" /*
 		*/ as result /*
 		*/ _col(17) %8.0g `lb_coef' " " /*
 		*/ _col(32) %8.0g `lower_bound_ci' " " /*

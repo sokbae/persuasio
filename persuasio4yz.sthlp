@@ -18,98 +18,115 @@
 {col 5}{it:option}{col 24}{it:Description}
 {space 4}{hline 44}
 {col 5}{cmd:level}(#){col 24}Set confidence level; default is {cmd:level}(95)
-{col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present; default is "no_interaction"
+{col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
 {col 5}{cmd:method}({it:string}){col 24}Inference method; default is {cmd:method}("normal")
-{col 5}{cmd:nboot}(#){col 24}Perform # bootstrap replications; default is {cmd:nboot}(50)
+{col 5}{cmd:nboot}(#){col 24}Perform # bootstrap replications
 {col 5}{cmd:title}({it:string}){col 24}Title of estimation
 {space 4}{hline 44}
 
 {title:Description}
 
-{cmd:persuasio4yz} conducts causal inference on persuasive effects for binary outcomes {it:y} and binary instruments {it:z}. 
+{cmd:persuasio4yz} conducts causal inference on persuasive effects
 
 {p 4 4 2}
-This command is for the case when persuasive treatment ({it:t}) is unobserved, using estimates of the lower bound on the average persuation rate (APR) via this package{c 39}s command {cmd:aprlb}.
+It is assumed that binary outcomes {it:y} and binary instruments {it:z} are observed. 
+This command is for the case when persuasive treatment ({it:t}) is unobserved, 
+using estimates of the lower bound on the average persuation rate (APR) via 
+this package{c 39}s command {cmd:aprlb}.
 
 {p 4 4 2}
 {it:varlist} should include {it:depvar} {it:instrvar} {it:covariates} in order. Here, {it:depvar} is binary outcomes ({it:y}), {it:instrvar} is binary instruments ({it:z}), and {it:covariates} ({it:x}) are optional. 
 
 {p 4 4 2}
-When treatment {it:t} is unobserved, the upper bound on the APR is just 1. 
+When treatment {it:t} is unobserved, the upper bound on the APR is simply 1. 
 
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:covariates} are absent, the lower bound (theta_L) on the APR is defined by 
+{break}    - If {it:x} are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-{p 4 4 2}
-	theta_L = {Pr( {it:y} = 1 | {it:z} = 1 ) - Pr( {it:y} = 1 | {it:z} = 0 )}/{1 - Pr( {it:y} = 1 | {it:z} = 0 )}.
+	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 {p 4 4 2}
 	The estimate and confidence interval are obtained by the following procedure:
 	
-{break}    	1. Pr( {it:y} = 1 | {it:z} = 1 ) and Pr( {it:y} = 1 | {it:z} = 0 ) are estimated by regressing {it:y} on {it:z}.
-{break}    	2. The lower bound on the APR is computed using the estimates obtained above.
-{break}    	3. The standard error of the estimate is computed via STATA command {cmd:nlcom}.
-{break}    	4. Then, a confidence interval for the APR is set by [ {it:est} - {it:cv} * {it:se} , 1 ], 
-	   where {it:est} is the estimate, {it:se} is the standard error, and
-	   {it:cv} is the one-sided standard normal critical value (e.g., {it:cv} = 1.645 for {cmd:level}(95)).
-	
-{break}    - If {it:covariates} are present, the lower bound (theta_L) on the APR is defined by 
+{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing {it:y} on {it:z}.
+{break}    2. {cmd:theta_L} is computed using the estimates obtained above.
+{break}    3. The standard error is computed via STATA command {bf:nlcom}. 
+{break}    4. Then, a confidence interval for the APR is set by 
 
+{p 8 8 2}		[ {it:est} - {it:cv} * {it:se} , 1 ],
+	
 {p 4 4 2}
-	theta_L = E [ theta_L(x) ],
+where {it:est} is the estimate, {it:se} is the standard error, and {it:cv} is the one-sided standard normal critical value (e.g., {it:cv} = 1.645 for {cmd:level}(95)).
+	
+{break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+
+	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
 {p 4 4 2}
 	where
 
-{p 4 4 2}
-	theta_L(x) = {Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) - Pr( {it:y} = 1 | {it:z} = 0, {it:x} )}/{1 - Pr( {it:y} = 1 | {it:z} = 0, {it:x} )}.
+	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 		
 {p 4 4 2}
-	The estimate and confidence interval are obtained by the following procedure.
+The estimate is obtained by the following procedure.
 	
 {p 4 4 2}
-	If {cmd:model}("no_interaction") is selected (default choice),
+If {cmd:model}("no_interaction") is selected (default choice),
 	
-{break}    	1. Pr( {it:y} = 1 | {it:z} , {it:x} ) is estimated by regressing {it:y} on {it:z} and {it:x}.
-	
-{p 4 4 2}
-	Alternatively, if {cmd:model}("interaction") is selected,
-	
-{break}    	1a. Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) is estimated by regressing {it:y} on {it:x} given {it:z} = 1.
-{break}    	1b. Pr( {it:y} = 1 | {it:z} = 0, {it:x} ) is estimated by regressing {it:y} on {it:x} given {it:z} = 0.
+{break}    1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing {it:y} on {it:z} and {it:x}.
 	
 {p 4 4 2}
-	Ater step 1, both options are followed by:
+Alternatively, if {cmd:model}("interaction") is selected,
 	
-{break}    	2. For each x in the estimation sample, theta_L(x) is computed using the estimates obtained above.
-{break}    	3. The estimates of theta_L(x) are averaged to obtain the estimate of theta_L.
-{break}    	4. A bootstrap confidence interval for the APR is set by [ bs_est({it:alpha}) , 1 ],
-	   where bs_est({it:alpha}) is the {it:alpha} quantile of the bootstrap estimates of theta_L
-	   and 1 - {it:alpha} is the confidence level.    {break}
+{break}    1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 1.
+{break}    1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 0.
 	
 {p 4 4 2}
-	The bootstrap procedure is implemented via STATA command {cmd:bootstrap}. 
+Ater step 1, both options are followed by:
+	
+{break}    2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
+{break}    3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
+{break}    4. A bootstrap confidence interval for the APR is set by 
+
+{p 8 8 2}		[ bs_est({it:alpha}) , 1 ],
+		
+{p 4 4 2}
+where bs_est({it:alpha}) is the {it:alpha} quantile of the bootstrap estimates of {cmd:theta_L}
+and 1 - {it:alpha} is the confidence level.    {break}
+	
+{p 4 4 2}
+The bootstrap procedure is implemented via STATA command {cmd:bootstrap}. 
 		
 
 {title:Options}
 
-{cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x} when {it:covariates} are present. 
+{cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x}. 
 
 {p 4 4 2}
-The default option is "no_interaction" between {it:z} and {it:x}. When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; this is accomplished by estimating Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) and Pr( {it:y} = 1 | {it:z} = 0, {it:x} ), separately.
+This option is only releveant when {it:x} is present.
+The default option is "no_interaction" between {it:z} and {it:x}. 
+When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; 
+this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
 
 {cmd:level}(#) sets confidence level; default is {cmd:level}(95). 
 
-{cmd:method}({it:string}) refers the method for inference; default is {cmd:method}("normal").
+{cmd:method}({it:string}) refers the method for inference.
+
+{p 4 4 2}
+The default option is {cmd:method}("normal").
 By the naure of identification, one-sided confidence intervals are produced. 
 
-{break}    	1. When {it:covariates} are present, it needs to be set as {cmd:method}("bootstrap"); otherwise, the confidence interval will be missing.
+{p 4 8 2}1. When {it:x} are present, it needs to be set as {cmd:method}("bootstrap"); 
+otherwise, the confidence interval will be missing.
 	
-{break}    	2. When {it:covariates} are absent, both options "normal" and "bootstrap" yield non-missing confidence intervals.
+{p 4 8 2}2. When {it:x} are absent, both options yield non-missing confidence intervals.
 	
-{cmd:nboot}(#) chooses the number of bootstrap replications; default is {cmd:nboot}(50).
+{cmd:nboot}(#) chooses the number of bootstrap replications.
+
+{p 4 4 2}
+The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
 {cmd:title}({it:string}) specifies the title of estimation.

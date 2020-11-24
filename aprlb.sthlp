@@ -17,7 +17,7 @@
 
 {col 5}{it:option}{col 24}{it:Description}
 {space 4}{hline 44}
-{col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present; default is "no_interaction"
+{col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
 {col 5}{cmd:title}({it:string}){col 24}Title of estimation
 {space 4}{hline 44}
 
@@ -33,48 +33,45 @@ and {it:covariates} ({it:x}) are optional.
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:covariates} are absent, the lower bound (theta_L) on the APR is defined by 
+{break}    - If {it:x} are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-{p 4 4 2}
-	theta_L = {Pr( {it:y} = 1 | {it:z} = 1 ) - Pr( {it:y} = 1 | {it:z} = 0 )}/{1 - Pr( {it:y} = 1 | {it:z} = 0 )}.
+	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 {p 4 4 2}
 	The estimate and its standard error are obtained by the following procedure:
 	
-{break}    	1. Pr( {it:y} = 1 | {it:z} = 1 ) and Pr( {it:y} = 1 | {it:z} = 0 ) are estimated by regressing {it:y} on {it:z}.
-{break}    	2. The lower bound on the APR is computed using the estimates obtained above.
-{break}    	3. The standard error of the estimate is computed via STATA command {bf:nlcom}. 
+{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing {it:y} on {it:z}.
+{break}    2. {cmd:theta_L} is computed using the estimates obtained above.
+{break}    3. The standard error is computed via STATA command {bf:nlcom}. 
 
-{break}    - If {it:covariates} are present, the lower bound (theta_L) on the APR is defined by 
+{break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-{p 4 4 2}
-	theta_L = E [ theta_L(x) ],
+	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
 {p 4 4 2}
 	where
 
-{p 4 4 2}
-	theta_L(x) = {Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) - Pr( {it:y} = 1 | {it:z} = 0, {it:x} )}/{1 - Pr( {it:y} = 1 | {it:z} = 0, {it:x} )}.
+	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 	
 {p 4 4 2}
-	The estimate is obtained by the following procedure.
+The estimate is obtained by the following procedure.
 	
 {p 4 4 2}
-	If {cmd:model}("no_interaction") is selected (default choice),
+If {cmd:model}("no_interaction") is selected (default choice),
 	
-{break}    	1. Pr( {it:y} = 1 | {it:z} , {it:x} ) is estimated by regressing {it:y} on {it:z} and {it:x}.
-	
-{p 4 4 2}
-	Alternatively, if {cmd:model}("interaction") is selected,
-	
-{break}    	1a. Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) is estimated by regressing {it:y} on {it:x} given {it:z} = 1.
-{break}    	1b. Pr( {it:y} = 1 | {it:z} = 0, {it:x} ) is estimated by regressing {it:y} on {it:x} given {it:z} = 0.
+{break}    1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing {it:y} on {it:z} and {it:x}.
 	
 {p 4 4 2}
-	Ater step 1, both options are followed by:
+Alternatively, if {cmd:model}("interaction") is selected,
 	
-{break}    	2. For each x in the estimation sample, theta_L(x) is computed using the estimates obtained above.
-{break}    	3. The estimates of theta_L(x) are averaged to obtain the estimate of theta_L.
+{break}    1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 1.
+{break}    1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 0.
+	
+{p 4 4 2}
+Ater step 1, both options are followed by:
+	
+{break}    2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
+{break}    3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
 	
 {p 4 4 2}
 	When {it:covariates} are present, the standard error is missing because an analytic formula for the standard error is complex.
@@ -83,10 +80,13 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 
 {title:Options}
 
-{cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x} when {it:covariates} are present. 
+{cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x}. 
 
 {p 4 4 2}
-The default option is "no_interaction" between {it:z} and {it:x}. When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; this is accomplished by estimating Pr( {it:y} = 1 | {it:z} = 1, {it:x} ) and Pr( {it:y} = 1 | {it:z} = 0, {it:x} ), separately.
+This option is only releveant when {it:x} is present.
+The default option is "no_interaction" between {it:z} and {it:x}. 
+When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; 
+this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
 
 {cmd:title}({it:string}) specifies the title of estimation.
 

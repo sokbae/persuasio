@@ -16,7 +16,7 @@ Syntax
 
 | _option_          | _Description_           | 
 |-------------------|-------------------------|
-| {cmd:model}(_string_)   | Regression model when _covariates_ are present; default is "no_interaction" |
+| {cmd:model}(_string_)   | Regression model when _covariates_ are present |
 | {cmd:title}(_string_)   | Title of estimation     |
 
 
@@ -30,39 +30,39 @@ and _covariates_ (_x_) are optional.
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _covariates_ are absent, the lower bound (theta_L) on the APR is defined by 
+- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-	theta_L = {Pr( _y_ = 1 | _z_ = 1 ) - Pr( _y_ = 1 | _z_ = 0 )}/{1 - Pr( _y_ = 1 | _z_ = 0 )}.
+	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 	The estimate and its standard error are obtained by the following procedure:
 	
-	1. Pr( _y_ = 1 | _z_ = 1 ) and Pr( _y_ = 1 | _z_ = 0 ) are estimated by regressing _y_ on _z_.
-	2. The lower bound on the APR is computed using the estimates obtained above.
-	3. The standard error of the estimate is computed via STATA command __nlcom__. 
+1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing _y_ on _z_.
+2. {cmd:theta_L} is computed using the estimates obtained above.
+3. The standard error is computed via STATA command __nlcom__. 
 
-- If _covariates_ are present, the lower bound (theta_L) on the APR is defined by 
+- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-	theta_L = E [ theta_L(x) ],
+	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
 	where
 
-	theta_L(x) = {Pr( _y_ = 1 | _z_ = 1, _x_ ) - Pr( _y_ = 1 | _z_ = 0, _x_ )}/{1 - Pr( _y_ = 1 | _z_ = 0, _x_ )}.
+	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 	
-	The estimate is obtained by the following procedure.
+The estimate is obtained by the following procedure.
 	
-	If {cmd:model}("no_interaction") is selected (default choice),
+If {cmd:model}("no_interaction") is selected (default choice),
 	
-	1. Pr( _y_ = 1 | _z_ , _x_ ) is estimated by regressing _y_ on _z_ and _x_.
+1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing _y_ on _z_ and _x_.
 	
-	Alternatively, if {cmd:model}("interaction") is selected,
+Alternatively, if {cmd:model}("interaction") is selected,
 	
-	1a. Pr( _y_ = 1 | _z_ = 1, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 1.
-	1b. Pr( _y_ = 1 | _z_ = 0, _x_ ) is estimated by regressing _y_ on _x_ given _z_ = 0.
+1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 1.
+1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 0.
 	
-	Ater step 1, both options are followed by:
+Ater step 1, both options are followed by:
 	
-	2. For each x in the estimation sample, theta_L(x) is computed using the estimates obtained above.
-	3. The estimates of theta_L(x) are averaged to obtain the estimate of theta_L.
+2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
+3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
 	
 	When _covariates_ are present, the standard error is missing because an analytic formula for the standard error is complex.
 	Bootstrap inference is implemented when this package's command __persuasio__ is called to conduct inference. 
@@ -70,9 +70,12 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 Options
 -------
 
-{cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_ when _covariates_ are present. 
+{cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-The default option is "no_interaction" between _z_ and _x_. When "interaction" is selected, full interactions between _z_ and _x_ are allowed; this is accomplished by estimating Pr( _y_ = 1 | _z_ = 1, _x_ ) and Pr( _y_ = 1 | _z_ = 0, _x_ ), separately.
+This option is only releveant when _x_ is present.
+The default option is "no_interaction" between _z_ and _x_. 
+When "interaction" is selected, full interactions between _z_ and _x_ are allowed; 
+this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
 
 {cmd:title}(_string_) specifies the title of estimation.
 
