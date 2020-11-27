@@ -33,6 +33,23 @@ global covariates "MBfemale Mreportedage MZBfemale MZreportedage MZBvoted2004 MZ
 
 
 *********************************************************
+**** Calculation Example *****
+*********************************************************
+
+foreach var in voteddem_all readsome { 
+
+	foreach treat in 0 1 {
+		
+		sum `var' if post == `treat'
+		scalar `var'_`treat' = r(mean)
+
+		}
+}
+
+calc4persuasio voteddem_all_1 voteddem_all_0 readsome_1 readsome_0
+
+
+*********************************************************
 **** Part I: Lower Bound on Average Persuation Rate *****
 *********************************************************
 
