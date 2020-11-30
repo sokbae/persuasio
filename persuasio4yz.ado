@@ -5,7 +5,7 @@ _version 0.1.0_
 Title
 -----
 
-{phang}{cmd:persuasio4yz} {hline 2} Conducts causal inference on persuasive effects for binary outcomes _y_ and binary instruments _z_
+{phang}{cmd:persuasio4yz} {hline 2} Conducts causal inference on persuasive effects for binary outcome _y_ and binary instrument _z_
 
 Syntax
 ------
@@ -25,9 +25,9 @@ Syntax
 Description
 -----------
 
-{cmd:persuasio4yz} conducts causal inference on persuasive effects
+{cmd:persuasio4yz} conducts causal inference on persuasive effects.
 
-It is assumed that binary outcomes _y_ and binary instruments _z_ are observed. 
+It is assumed that binary outcome _y_ and binary instrument _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is unobserved, 
 using estimates of the lower bound on the average persuation rate (APR) via 
 this package's command {cmd:aprlb}.
@@ -142,12 +142,7 @@ The second example conducts bootstrap inference on the APR.
 The third example conducts bootstrap inference on the APR with a covariate, MZwave2, interacting with the instrument, post. 
 		
 		. persuasio4yz voteddem_all post MZwave2, level(80) model("interaction") method("bootstrap") nboot(1000)			
-		
-
-The fourh example consider a large number of covariates. This example runs slower than the previous example. 
-
-		. persuasio4yz voteddem_all post doperator*, level(80) method("bootstrap") nboot(1000)
-
+				
 Stored results
 --------------
 
