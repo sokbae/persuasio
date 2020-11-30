@@ -190,7 +190,7 @@ program aprub, eclass
 	
 	display " "
 	display as text "{hline 65}"
-	display "{bf:aprlb:} Estimating the Upper Bound on the Average Persuasion Rate"
+	display "{bf:aprub:} Estimating the Upper Bound on the Average Persuasion Rate"
 	display as text "{hline 65}"
 	display " "
 	display " - Binary outcome: `Y'"
@@ -223,11 +223,11 @@ program aprub, eclass
 		nlcom (upper_bound: ([a_u_reg_mean]_cons + [a_u_reg_mean]`Z' - [b_l_reg_mean]_cons)/(1-[b_l_reg_mean]_cons))
 		}
 				
-    tempname b V lb se
+    tempname b V ub se
 	
 	matrix `b' = r(b)
 	matrix `V' = r(V)	
-	scalar `lb' = `b'[1,1]
+	scalar `ub' = `b'[1,1]
 	scalar `se' = sqrt(`V'[1,1])
 	
 	ereturn post `b' `V', obs(`nobs') esample(`touse')
@@ -237,8 +237,8 @@ program aprub, eclass
 	display "Note: It is recommended to use {bf:persuasio} for causal inference."
     display " "
 	
-	ereturn scalar lb_coef = `lb'
-    ereturn scalar lb_se = `se'
+	ereturn scalar ub_coef = `ub'
+    ereturn scalar ub_se = `se'
     ereturn local outcome `Y'
 	ereturn local treatment `T'
     ereturn local instrument `Z'
@@ -296,9 +296,9 @@ program aprub, eclass
 	
 	local nobs = r(N)
 	
-	tempname b lb se
+	tempname b ub se
 	
-	scalar `lb' = r(mean)
+	scalar `ub' = r(mean)
 	scalar `se' = .
 		
 	matrix `b' = r(mean)
@@ -312,7 +312,7 @@ program aprub, eclass
 	display "       Standard errors are missing if covariates are present."
     display " "
 	
-	ereturn scalar ub_coef = `lb'
+	ereturn scalar ub_coef = `ub'
     ereturn scalar ub_se = `se'
     ereturn local outcome `Y'
 	ereturn local treatment `T'

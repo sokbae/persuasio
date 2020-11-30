@@ -237,7 +237,7 @@ program persuasio4yz, eclass
 		*/ _col(30) "[`level'% Conf. Interval]" 
         display as text "{hline 13}{c +}{hline 40}"
 	    
-		display as text %12s "{cmd:theta_L}" " {c |}" /*
+		display as text %12s "Lower Bound" " {c |}" /*
 		*/ as result /*
 		*/ _col(17) %8.0g `lb_coef' " " /*
 		*/ _col(32) %8.0g `lower_bound_ci' " " /*
@@ -302,7 +302,7 @@ program persuasio4yz, eclass
 		*/ _col(30) "[`level'% Conf. Interval]" 
         display as text "{hline 13}{c +}{hline 40}"
 	    
-		display as text %12s "{cmd:theta_L}" " {c |}" /*
+		display as text %12s "Lower Bound" " {c |}" /*
 		*/ as result /*
 		*/ _col(17) %8.0g `lb_coef' " " /*
 		*/ _col(32) %8.0g `lower_bound_ci' " " /*

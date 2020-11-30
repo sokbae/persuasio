@@ -190,8 +190,24 @@ program persuasio4ytz, eclass
 	version 14.2
 	
 	syntax varlist (min=3) [if] [in] [, level(cilevel) model(string) method(string) nboot(numlist >0 integer) title(string)]
+			
+	marksample touse
+	
+	gettoken Y varlist_without_Y : varlist
+	gettoken T varlist_without_YT : varlist_without_Y
+	gettoken Z X : varlist_without_YT
 		
-	quietly aprlb `varlist' `if' `in', model("`model'")
+	quietly aprlb `Y' `Z' `X' `if' `in', model("`model'")
+		
+	tempname lb_coef lb_se
+	scalar `lb_coef' = e(lb_coef)
+	scalar `lb_se' = e(lb_se)
+	
+	quietly aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+		
+	tempname ub_coef ub_se
+	scalar `ub_coef' = e(ub_coef)
+	scalar `ub_se' = e(ub_se)	
 	
 	* displaying results
 	if "`title'" != "" {
@@ -200,53 +216,79 @@ program persuasio4ytz, eclass
     
 	}
 	
-	tempname lb_coef
-	scalar `lb_coef' = e(lb_coef)
 	
 	* inference based on normal approximation
 	if "`method'" == "" | "`method'" == "normal" { 
 	
 		if "`level'" != "" {	
-		local alpha_level = `level'/100
+		local alpha_level = 1 - `level'/100
 		}
 		if "`level'" == "" {	
-		local alpha_level = 0.95
+		local alpha_level = 0.05
 		}
 		
-		tempname cv_cns lower_bound_ci
-		scalar `cv_cns' = invnormal(`alpha_level')   /* one-sided critical value */
-		scalar `lower_bound_ci' = e(lb_coef) - `cv_cns'*e(lb_se)
+		/* compute the critical value using Stoye (2009) */
 		
+		tempname cv_cns1 cv_cns2 correction_term mincv maxcv gridsize cv_cns_stoye lb_end ub_end
+		scalar `cv_cns1' = invnormal(1-`alpha_level')   /* one-sided critical value */
+		scalar `cv_cns2' = invnormal(1-`alpha_level'/2) /* two-sided critical value */
+		scalar `mincv' = `cv_cns1'-0.01
+		scalar `maxcv' = `cv_cns2'+0.01
+		scalar `gridsize' = (`maxcv'-`mincv')/(e(N)-1)
+		scalar `correction_term' = (`ub_coef'-`lb_coef')/max(`ub_se',`lb_se')
+
+		quietly {
+			tempvar cvtmp difftmp
+			egen `cvtmp' = fill("0 `=`gridsize''")
+			replace `cvtmp' = `cvtmp' + `mincv'
+			gen `difftmp' = abs(normal(`cvtmp' + `correction_term') - normal(-`cvtmp') - (1-`alpha_level'))
+			sum `difftmp'
+			replace `cvtmp' = . if `difftmp' > r(min)				
+			sum `cvtmp'
+			scalar `cv_cns_stoye' = r(mean)
+			}
+
+		*scalar `lb_end' = max(0,`lb_coef' - `cv_cns_stoye'*`lb_se')
+		*scalar `ub_end' = min(1,`ub_coef' + `cv_cns_stoye'*`ub_se')
+		
+		scalar `lb_end' = `lb_coef' - `cv_cns_stoye'*`lb_se'
+		scalar `ub_end' = `ub_coef' + `cv_cns_stoye'*`ub_se'
+				
 		* Displaying results
 	    display " "
 		display as text "{hline 65}"
-		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
-		display " when binary outcomes and binary instruments are observed"
+		display "{bf:persuasio4ytz:} Causal inference on the Average Persuasion Rate"
+		display " when outcome, instrument and instrument are observed"
 		display as text "{hline 65}"
 		display " "
 		if "`title'" != "" {
 		display "Title: `title'"
 		}
 		display " - Binary outcome: `e(outcome)'"
+		display " - Binary treatment: `e(treatment)'"
 		display " - Binary instrument: `e(instrument)'"
 		display " "
-		display as text "{hline 13}{c TT}{hline 40}"
+		display as text "{hline 25}{c TT}{hline 40}"
 
-		display as text %12s  "Parameter" " {c |}" /*
-		*/ _col(16) " Estimate " /*
-		*/ _col(30) "[`level'% Conf. Interval]" 
-        display as text "{hline 13}{c +}{hline 40}"
+		display as text %24s  "Parameter" " {c |}" /*
+		*/ _col(28) "Bound Estimate" /*
+		*/ _col(48) "`level'% Conf. Interval" 
+        display as text "{hline 25}{c +}{hline 40}"
 	    
-		display as text %12s "{cmd:theta_L}" " {c |}" /*
+		display as text %24s "Average Persuation Rate" " {c |}" /*
 		*/ as result /*
-		*/ _col(17) %8.0g `lb_coef' " " /*
-		*/ _col(32) %8.0g `lower_bound_ci' " " /*
-		*/ %8.0g 1 " "
+		*/ _col(27) %8.0g `lb_coef' " " /*
+		*/ _col(33) %8.0g `ub_coef' " " /*
+		*/ _col(47) %8.0g `lb_end' " " /*
+		*/ _col(53) %8.0g `ub_end' " "
 		
-		display as text "{hline 13}{c BT}{hline 40}"
+		display as text "{hline 25}{c BT}{hline 40}"
 
 		display " "
-		display "Note: `level'% one-sided conf. interval is based on normal approximation."
+		display "Note: `level'% conf. interval is based on normal approximation"
+		display "       using the method of Stoye (2009).                      "
+		display "       Conf. interval is missing if covariates are present."
+		display "       Use option bootstrap for that case."
 		display " "
 	
 	}
@@ -257,8 +299,8 @@ program persuasio4ytz, eclass
 	    * Displaying results
 	    display " "
 		display as text "{hline 65}"
-		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
-		display " when binary outcomes and binary instruments are observed"
+		display "{bf:persuasio4ytz:} Causal inference on the Average Persuasion Rate"
+		display " when outcome, instrument and instrument are observed"
 		display " along with covariates"
 		display as text "{hline 65}"
 		display " "
@@ -266,65 +308,82 @@ program persuasio4ytz, eclass
 		display "Title: `title'"
 		}
 		display " - Binary outcome: `e(outcome)'"
+		display " - Binary treatment: `e(treatment)'"
 		display " - Binary instrument: `e(instrument)'"
 		display " - Covariates (if exist): `e(covariates)'"
 		display " - Regression model (if specified): `e(model)'"
 		display " "
 	
 		if "`level'" != "" {	
-		local alpha_level = `level'/100
+		local alpha_level = 1 - `level'/100
 		}
 		if "`level'" == "" {	
-		local alpha_level = 0.95
+		local alpha_level = 0.05
 		}
+
+		local bs_level = round(10000*(1 - `alpha_level'*2))/100 /* level for bootstrap */
 		
-		local cv_cns = invnormal(`alpha_level')   /* one-sided critical value */
-		local bs_level = round(10000*(1-(1-`alpha_level')*2))/100 /* level for bootstrap */
+		* lower bound
 		
 		if "`nboot'" != "" {
-			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `varlist' `if' `in', model("`model'") 
+			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' `if' `in', model("`model'")
 		}
 		if "`nboot'" == "" {
-			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `varlist' `if' `in', model("`model'")
+			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' `if' `in', model("`model'")
 			
 		}
 		
-		tempname bs_ci_percentile lower_bound_ci
+		tempname bs_ci_percentile lb_end ub_end
 		matrix `bs_ci_percentile' = e(ci_percentile)
-		scalar `lower_bound_ci' = `bs_ci_percentile'[1,1] 
-
+		scalar `lb_end' = `bs_ci_percentile'[1,1] 
+		
+		* upper bound
+		
+		if "`nboot'" != "" {
+			bootstrap coef=e(ub_coef), reps(`nboot') level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+		}
+		if "`nboot'" == "" {
+			bootstrap coef=e(ub_coef), reps(50) level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+			
+		}
+		
+		matrix `bs_ci_percentile' = e(ci_percentile)
+		scalar `ub_end' = `bs_ci_percentile'[2,1] 
+		
 		* Displaying results further
 		display " "
-		display as text "{hline 13}{c TT}{hline 40}"
+		display as text "{hline 25}{c TT}{hline 40}"
 
-		display as text %12s  "Parameter" " {c |}" /*
-		*/ _col(16) " Estimate " /*
-		*/ _col(30) "[`level'% Conf. Interval]" 
-        display as text "{hline 13}{c +}{hline 40}"
+		display as text %24s  "Parameter" " {c |}" /*
+		*/ _col(28) "Bound Estimate" /*
+		*/ _col(48) "`level'% Conf. Interval" 
+        display as text "{hline 25}{c +}{hline 40}"
 	    
-		display as text %12s "{cmd:theta_L}" " {c |}" /*
+		display as text %24s "Average Persuation Rate" " {c |}" /*
 		*/ as result /*
-		*/ _col(17) %8.0g `lb_coef' " " /*
-		*/ _col(32) %8.0g `lower_bound_ci' " " /*
-		*/ %8.0g 1 " "
+		*/ _col(27) %8.0g `lb_coef' " " /*
+		*/ _col(33) %8.0g `ub_coef' " " /*
+		*/ _col(47) %8.0g `lb_end' " " /*
+		*/ _col(53) %8.0g `ub_end' " "
 		
-		display as text "{hline 13}{c BT}{hline 40}"
+		display as text "{hline 25}{c BT}{hline 40}"
 
 		display " "
-		display "Note: `level'% one-sided conf. interval is based on percentile bootstrap."
+		display "Note: `level'% conf. interval is based on percentile bootstrap."
+		display "     The conf. level is one-sided for the lower and upper bounds separately."
 		display " "
 	
 	}
 	
-	tempname lb_coef_matrix lb_ci_matrix
+	tempname coef_matrix ci_matrix
 	
-	matrix `lb_coef_matrix' = (`lb_coef',1)
-	matrix `lb_ci_matrix' = (`lower_bound_ci',1)
+	matrix `coef_matrix' = (`lb_coef',`ub_coef')
+	matrix `ci_matrix' = (`lb_end',`ub_end')
 	
 	ereturn clear
-	ereturn matrix lb_est = `lb_coef_matrix'
-	ereturn matrix lb_ci = `lb_ci_matrix'
-	ereturn local cilevel = `alpha_level'*100
+	ereturn matrix bound_est = `coef_matrix'
+	ereturn matrix bound_ci = `ci_matrix'
+	ereturn local cilevel = (1-`alpha_level')*100
 	ereturn local inference_method "`method'"
 	
 	display "Reference: Jun and Lee (2019), arXiv:1812.02276 [econ.EM]"
