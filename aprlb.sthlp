@@ -46,12 +46,12 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 
 {break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-	{cmd:theta_L} = E[{cmd:theta_L}(x)],
+	{cmd:theta_L} = E[{cmd:theta_L}({it:x})],
 	
 {p 4 4 2}
 	where
 
-	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
+	{cmd:theta_L}({it:x}) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 	
 {p 4 4 2}
 The estimate is obtained by the following procedure.
@@ -70,8 +70,8 @@ Alternatively, if {cmd:model}("interaction") is selected,
 {p 4 4 2}
 Ater step 1, both options are followed by:
 	
-{break}    2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
-{break}    3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
+{break}    2. For each {it:x} in the estimation sample, {cmd:theta_L}({it:x}) is evaluated.
+{break}    3. The estimates of {cmd:theta_L}({it:x}) are averaged to estimate {cmd:theta_L}.
 	
 {p 4 4 2}
 	When {it:covariates} are present, the standard error is missing because an analytic formula for the standard error is complex.
@@ -112,10 +112,10 @@ The first example estimates the lower bound on the APR without covariates.
 		. aprlb voteddem_all post
 
 {p 4 4 2}
-The second example adds covariates.
+The second example adds a covariate.
 
 {p 4 4 2}
-		. aprlb voteddem_all post doperator*
+		. aprlb voteddem_all post MZwave2
 
 
 {title:Stored results}

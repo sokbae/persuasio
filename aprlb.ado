@@ -42,11 +42,11 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 
 - If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
-	{cmd:theta_L} = E[{cmd:theta_L}(x)],
+	{cmd:theta_L} = E[{cmd:theta_L}({it:x})],
 	
 	where
 
-	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
+	{cmd:theta_L}({it:x}) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})}.
 	
 The estimate is obtained by the following procedure.
 	
@@ -61,8 +61,8 @@ Alternatively, if {cmd:model}("interaction") is selected,
 	
 Ater step 1, both options are followed by:
 	
-2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
-3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
+2. For each _x_ in the estimation sample, {cmd:theta_L}({it:x}) is evaluated.
+3. The estimates of {cmd:theta_L}({it:x}) are averaged to estimate {cmd:theta_L}.
 	
 	When _covariates_ are present, the standard error is missing because an analytic formula for the standard error is complex.
 	Bootstrap inference is implemented when this package's command __persuasio__ is called to conduct inference. 
@@ -95,9 +95,9 @@ The first example estimates the lower bound on the APR without covariates.
 		
 		. aprlb voteddem_all post
 
-The second example adds covariates.
+The second example adds a covariate.
 
-		. aprlb voteddem_all post doperator*
+		. aprlb voteddem_all post MZwave2
 
 Stored results
 --------------
@@ -208,8 +208,7 @@ program aprlb, eclass
     ereturn scalar lb_se = `se'
     ereturn local outcome `Y'
     ereturn local instrument `Z'
-    ereturn local covariates `X'
-		
+ 		
 	}
 	
 	* if there are covariates (X)
