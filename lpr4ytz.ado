@@ -2,12 +2,11 @@
 
 _version 0.1.0_ 
 
-[To be updated]
 
 Title
 -----
 
-{phang}{cmd:lpr4ytz} {hline 2} Estimates the upper bound on the average persuasion rate
+{phang}{cmd:lpr4ytz} {hline 2} Estimates the local persuasion rate
 
 Syntax
 ------
@@ -25,51 +24,56 @@ Syntax
 Description
 -----------
 
-__lpr4ytz__ estimates the upper bound on the average persuation rate (APR).
+__lpr4ytz__ estimates the local persuasion rate (LPR).
 _varlist_ should include _depvar_ _treatrvar_ _instrvar_ _covariates_ in order.
 Here, _depvar_ is binary outcome (_y_), _treatrvar_ is binary treatment (_t_), 
 _instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional. 
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the upper bound ({cmd:theta_U}) on the APR is defined by 
+- If _x_ are absent, the LPR is defined by 
 
-	{cmd:theta_U} = {E[{it:A}|{it:z}=1] - E[{it:B}|{it:z}=0]}/{1 - E[{it:B}|{it:z}=0]},
-
-	where {it:A} = 1({it:y}=1,{it:t}=1)+1-1({it:t}=1) and 
-		  {it:B} = 1({it:y}=1,{it:t}=0).
+	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
 	The estimate and its standard error are obtained by the following procedure:
 	
-1. E[{it:A}|{it:z}=1] is estimated by regressing {it:A} on _z_.
-2. E[{it:B}|{it:z}=0] is estimated by regressing {it:B} on _z_.
-3. {cmd:theta_U} is computed using the estimates obtained above.
+1. The numerator of the LPR is estimated by regressing _y_ on _z_.
+2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on _z_.
+3. The LPR is obtained as the ratio.
 4. The standard error is computed via STATA command __nlcom__. 
 
-- If _x_ are present, the upper bound ({cmd:theta_U}) on the APR is defined by 
+- If _x_ are present, the LPR is defined by 
 
-	{cmd:theta_U} = E[{cmd:theta_U}({it:x})],
+	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
 	where
 
-	{cmd:theta_U}({it:x}) = {E[{it:A}|{it:z}=1,{it:x}] - E[{it:B}|{it:z}=0,{it:x}]}/{1 - E[{it:B}|{it:z}=0,{it:x}]}.
+{p 4 8 2}	{cmd:LPR}({it:x}) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0,{it:x}] - Pr[{it:y}=0,{it:t}=0|{it:z}=1,{it:x}]},
+	
+	e(1|x) = Pr({it:t}=1|{it:z}=1,{it:x}), and e(0|x) = Pr({it:t}=1|{it:z}=0,{it:x}).
 	
 The estimate is obtained by the following procedure.
 	
 If {cmd:model}("no_interaction") is selected (default choice),
 	
-1. E[{it:A}|{it:z}=1,{it:x}] is estimated by regressing {it:A} on _z_ and _x_.
-2. E[{it:B}|{it:z}=0,{it:x}] is estimated by regressing {it:B} on _z_ and _x_.
+1. The numerator of the LPR is estimated by regressing _y_ on _z_ and _x_.
+2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on _z_ and _x_.
+3. The LPR is obtained as the ratio.
+4. The standard error is computed via STATA command __nlcom__. 	
+	
+Note that in this case, {cmd:LPR}({it:x}) does not depend on _x_, because of the linear regression model specification.
 	
 Alternatively, if {cmd:model}("interaction") is selected,
 	
-1. E[{it:A}|{it:z}=1,{it:x}] is estimated by regressing {it:A} on _x_ given _z_ = 1.
-2. E[{it:B}|{it:z}=0,{it:x}] is estimated by regressing {it:B} on _x_ given _z_ = 0.
-	
-Ater step 1, both options are followed by:
-	
-3. For each _x_ in the estimation sample, {cmd:theta_U}({it:x}) is evaluated.
-4. The estimates of {cmd:theta_U}({it:x}) are averaged to estimate {cmd:theta_U}.
+{p 4 8 2} 1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing {it:y} on _x_ given _z_ = 0,1.
+
+{p 4 8 2} 2. Pr[{it:y}=0,{it:t}=0|{it:z},{it:x}] is estimated by regressing (1-{it:y})*(1-{it:t}) on _x_ given _z_ = 0,1.
+
+{p 4 8 2} 3. Pr({it:t}=1|{it:z},{it:x}) is estimated by regressing _t_ on _x_ given _z_ = 0,1.
+
+{p 4 8 2} 4. For each _x_ in the estimation sample, both {cmd:LPR}({it:x}) and {e(1|x)-e(0|x)} are evaluated.
+
+{p 4 8 2} 5. Then, the sample analog of {cmd:LPR} is constructed.
 	
 	When _covariates_ are present, the standard error is missing because an analytic formula for the standard error is complex.
 	Bootstrap inference is implemented when this package's command __persuasio__ is called to conduct inference. 
@@ -80,8 +84,6 @@ Options
 {cmd:model}(_string_) specifies a regression model.
 
 This option is only releveant when _x_ is present.
-The dependent variable is 
-either {it:A} or {it:B}. 
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
@@ -101,11 +103,15 @@ We first call the dataset included in the package.
 
 The first example estimates the upper bound on the APR without covariates.
 		
-		. lpr4ytz voteddem_all post
+		. lpr4ytz voteddem_all readsome post
 
 The second example adds a covariate.
 
-		. lpr4ytz voteddem_all post MZwave2
+		. lpr4ytz voteddem_all readsome post MZwave2
+		
+The third example allows for interactions between _x_ and _z_.
+
+		. lpr4ytz voteddem_all readsome post MZwave2, model("interaction")		
 
 Stored results
 --------------
@@ -114,10 +120,9 @@ Stored results
 
 > __e(N)__: sample size
 
-> __e(ub_coef)__: estimate of the upper bound on the average persuasion rate
+> __e(lpr_coef)__: estimate of the local persuasion rate
 
-> __e(ub_se)__: standard error of the upper bound on the average persuasion rate
-
+> __e(lpr_se)__: standard error of the estimate of the local persuasion rate
 
 ### Macros
 
