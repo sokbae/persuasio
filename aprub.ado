@@ -242,7 +242,8 @@ program aprub, eclass
     ereturn local outcome `Y'
 	ereturn local treatment `T'
     ereturn local instrument `Z'
-		
+	
+	estimates clear		
 	}
 	
 	* if there are covariates (X)
