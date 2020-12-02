@@ -3,13 +3,10 @@
 {p 4 4 2}
 {it:version 0.1.0} 
 
-{p 4 4 2}
-[To be updated]
-
 
 {title:Title}
 
-{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conducts causal inference on persuasive effects 
+{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conducts causal inference on the local persuasion rate 
 for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
 
 
@@ -30,13 +27,13 @@ for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
 
 {title:Description}
 
-{cmd:persuasio4ytz2lpr} conducts causal inference on persuasive effects.
+{cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
 
 {p 4 4 2}
 It is assumed that binary outcome {it:y}, binary treatment {it:t}, and binary instrument {it:z} are observed. 
 This command is for the case when persuasive treatment ({it:t}) is observed, 
-using estimates of the lower and upper bounds on the average persuation rate (APR) via 
-this package{c 39}s commands {cmd:aprlb} and {cmd:aprub}.
+using estimates of the local persuation rate (LPR) via 
+this package{c 39}s command {cmd:lprlb4ytz}.
 
 {p 4 4 2}
 {it:varlist} should include {it:depvar} {it:treatvar} {it:instrvar} {it:covariates} in order. 
@@ -46,120 +43,61 @@ Here, {it:depvar} is binary outcome ({it:y}), {it:treatvar} is binary treatment,
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+{break}    - If {it:x} are absent, the LPR is defined by 
 
-	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)},
+	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
 {p 4 4 2}
-	and the upper bound ({cmd:theta_U}) on the APR is defined by 
-
-	{cmd:theta_U} = {E[{it:A}|{it:z}=1] - E[{it:B}|{it:z}=0]}/{1 - E[{it:B}|{it:z}=0]},
-
-{p 4 4 2}
-	where {it:A} = 1({it:y}=1,{it:t}=1)+1-1({it:t}=1) and 
-		  {it:B} = 1({it:y}=1,{it:t}=0).	
-
-{p 4 4 2}
-	The lower bound is estimated by the following procedure:
+	The estimate and its standard error are obtained by the following procedure:
 	
-{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing {it:y} on {it:z}.
-{break}    2. {cmd:theta_L} is computed using the estimates obtained above.
-{break}    3. The standard error is computed via STATA command {bf:nlcom}. 
-
-{p 4 4 2}
-	The upper boound is stimated by the following procedure:
-	
-{break}    1. E[{it:A}|{it:z}=1] is estimated by regressing {it:A} on {it:z}.
-{break}    2. E[{it:B}|{it:z}=0] is estimated by regressing {it:B} on {it:z}.
-{break}    3. {cmd:theta_U} is computed using the estimates obtained above.
+{break}    1. The numerator of the LPR is estimated by regressing {it:y} on {it:z}.
+{break}    2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on {it:z}.
+{break}    3. The LPR is obtained as the ratio.
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 
+{break}    5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 
-{p 4 4 2}
-	Then, a confidence interval for the APR is set by 
+{break}    - If {it:x} are present, the LPR is defined by 
 
-{p 8 8 2}		[ {it:est_lb} - {it:cv} * {it:se_lb} , {it:est_ub} + {it:cv} * {it:se_ub} ],
-	
-{p 4 4 2}
-where {it:est_lb} and {it:est_ub} are the estimates of the lower and upper bounds, 
-{it:se_lb} and {it:se_ub} are the corresponding standard errors, and 
-{it:cv} is the critical value obtained via the method of Stoye (2009).
-	
-{break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
-
-	{cmd:theta_L} = E[{cmd:theta_L}(x)],
+	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
 {p 4 4 2}
 	where
 
-	{cmd:theta_L}(x) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{1 - Pr({it:y}=1|{it:z}=0,{it:x})},
-	
-{space 2}and the upper bound ({cmd:theta_U}) on the APR is defined by 
-
-	{cmd:theta_U} = E[{cmd:theta_U}({it:x})],
+{p 4 8 2}	{cmd:LPR}({it:x}) = {Pr({it:y}=1|{it:z}=1,{it:x}) - Pr({it:y}=1|{it:z}=0,{it:x})}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0,{it:x}] - Pr[{it:y}=0,{it:t}=0|{it:z}=1,{it:x}]},
 	
 {p 4 4 2}
-	where
-
-	{cmd:theta_U}({it:x}) = {E[{it:A}|{it:z}=1,{it:x}] - E[{it:B}|{it:z}=0,{it:x}]}/{1 - E[{it:B}|{it:z}=0,{it:x}]}.
-			
+	e(1|x) = Pr({it:t}=1|{it:z}=1,{it:x}), and e(0|x) = Pr({it:t}=1|{it:z}=0,{it:x}).
+	
 {p 4 4 2}
-The lower bound is estimated by the following procedure:
+The estimate is obtained by the following procedure.
 	
 {p 4 4 2}
 If {cmd:model}("no_interaction") is selected (default choice),
 	
-{break}    1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing {it:y} on {it:z} and {it:x}.
+{break}    1. The numerator of the LPR is estimated by regressing {it:y} on {it:z} and {it:x}.
+{break}    2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on {it:z} and {it:x}.
+{break}    3. The LPR is obtained as the ratio.
+{break}    4. The standard error is computed via STATA command {bf:nlcom}. 	
+{break}    5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
+	
+{p 4 4 2}
+Note that in this case, {cmd:LPR}({it:x}) does not depend on {it:x}, because of the linear regression model specification.
 	
 {p 4 4 2}
 Alternatively, if {cmd:model}("interaction") is selected,
 	
-{break}    1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 1.
-{break}    1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 0.
-	
-{p 4 4 2}
-Ater step 1, both options are followed by:
-	
-{break}    2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
-{break}    3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
+{p 4 8 2} 1. Pr({it:y}=1|{it:z},{it:x}) is estimated by regressing {it:y} on {it:x} given {it:z} = 0,1.
 
-{p 4 4 2}
-The upper boound is stimated by the following procedure:
-	
-{p 4 4 2}
-If {cmd:model}("no_interaction") is selected (default choice),
-	
-{break}    1. E[{it:A}|{it:z}=1,{it:x}] is estimated by regressing {it:A} on {it:z} and {it:x}.
-{break}    2. E[{it:B}|{it:z}=0,{it:x}] is estimated by regressing {it:B} on {it:z} and {it:x}.
-	
-{p 4 4 2}
-Alternatively, if {cmd:model}("interaction") is selected,
-	
-{break}    1. E[{it:A}|{it:z}=1,{it:x}] is estimated by regressing {it:A} on {it:x} given {it:z} = 1.
-{break}    2. E[{it:B}|{it:z}=0,{it:x}] is estimated by regressing {it:B} on {it:x} given {it:z} = 0.
-	
-{p 4 4 2}
-Ater step 1, both options are followed by:
-	
-{break}    3. For each {it:x} in the estimation sample, {cmd:theta_U}({it:x}) is evaluated.
-{break}    4. The estimates of {cmd:theta_U}({it:x}) are averaged to estimate {cmd:theta_U}.
+{p 4 8 2} 2. Pr[{it:y}=0,{it:t}=0|{it:z},{it:x}] is estimated by regressing (1-{it:y})*(1-{it:t}) on {it:x} given {it:z} = 0,1.
 
-{p 4 4 2}
-Then, a bootstrap confidence interval for the APR is set by 
+{p 4 8 2} 3. Pr({it:t}=1|{it:z},{it:x}) is estimated by regressing {it:t} on {it:x} given {it:z} = 0,1.
 
-{p 8 8 2}		[ bs_est_lb({it:alpha}) , bs_est_ub({it:alpha}) ],
-		
-{p 4 4 2}
-where bs_est_lb({it:alpha}) is the {it:alpha} quantile of the bootstrap estimates of {cmd:theta_L},
-	  bs_est_ub({it:alpha}) is the 1 - {it:alpha} quantile of the bootstrap estimates of {cmd:theta_U},
-and 1 - {it:alpha} is the confidence level. 
+{p 4 8 2} 4. For each {it:x} in the estimation sample, both {cmd:LPR}({it:x}) and {e(1|x)-e(0|x)} are evaluated.
 
-{p 4 4 2}
-The resulting coverage probability is 1 - {it:alpha} if the identified interval never reduces to a singleton set.
-More generally, it will be 1 - 2*{it:alpha} by Bonferroni correction.     {break}
-	
-{p 4 4 2}
-The bootstrap procedure is implemented via STATA command {cmd:bootstrap}. 
-		
+{p 4 8 2} 5. Then, the sample analog of {cmd:LPR} is constructed.
+
+{p 4 8 2} 6. Finally, the bootstrap procedure is implemented via STATA command {cmd:bootstrap}.
+
 
 {title:Options}
 
@@ -176,13 +114,11 @@ When "interaction" is selected, full interactions between {it:z} and {it:x} are 
 
 {p 4 4 2}
 The default option is {cmd:method}("normal").
-By the naure of identification, one-sided confidence intervals are produced. 
+Since the LPR is point-identified, usual two-sided confidence intervals are produced. 
 
-{p 4 8 2}1. When {it:x} are present, it needs to be set as {cmd:method}("bootstrap"); 
+{p 4 8 2}1. When {cmd:model}("interaction") is chosen as an option, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.
-	
-{p 4 8 2}2. When {it:x} are absent, both options yield non-missing confidence intervals.
-	
+		
 {cmd:nboot}(#) chooses the number of bootstrap replications.
 
 {p 4 4 2}
@@ -203,7 +139,7 @@ A use of normality-based bootstrap confidence interval is not recommended
 because bootstrap standard errors can be unreasonably large in applications. 
 
 
-{title:Examples }
+{title:Examples}
 
 {p 4 4 2}
 We first call the dataset included in the package.
@@ -212,19 +148,19 @@ We first call the dataset included in the package.
 		. use GKB, clear
 
 {p 4 4 2}
-The first example conducts inference on the APR without covariates, using normal approximation.
+The first example conducts inference on the LPR without covariates, using normal approximation.
 		
 {p 4 4 2}
 		. persuasio4ytz2lpr voteddem_all readsome post, level(80) method("normal")
 		
 {p 4 4 2}
-The second example conducts bootstrap inference on the APR.
+The second example conducts bootstrap inference on the LPR.
 		
 {p 4 4 2}
 		. persuasio4ytz2lpr voteddem_all readsome post, level(80) method("bootstrap") nboot(1000)	
 		
 {p 4 4 2}
-The third example conducts bootstrap inference on the APR with a covariate, MZwave2, interacting with the instrument, post. 
+The third example conducts bootstrap inference on the LPR with a covariate, MZwave2, interacting with the instrument, post. 
 		
 {p 4 4 2}
 		. persuasio4ytz2lpr voteddem_all readsome post MZwave2, level(80) model("interaction") method("bootstrap") nboot(1000)			
@@ -234,9 +170,9 @@ The third example conducts bootstrap inference on the APR with a covariate, MZwa
 
 {p 4 4 2}{bf:Matrices}
 
-{p 8 8 2} {bf:e(lb_est)}: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, ub]
+{p 8 8 2} {bf:e(lpr_est)}: (1*1 matrix) estimate of the local persuasion rate
 
-{p 8 8 2} {bf:e(lb_ci)}: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, ub_ci] 
+{p 8 8 2} {bf:e(lpr_ci)}: (1*2 matrix) confidence interval for the local persuasion rate in the form of [lb_ci, ub_ci] 
 
 
 {p 4 4 2}{bf:Macros}
