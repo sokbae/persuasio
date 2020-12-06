@@ -1,11 +1,9 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
-{phang}{cmd:aprub} {hline 2} Estimates the upper bound on the average persuasion rate
+{phang}{cmd:aprub} {hline 2} Estimate the upper bound on the average persuasion rate
 
 Syntax
 ------
@@ -25,12 +23,12 @@ Description
 
 __aprub__ estimates the upper bound on the average persuation rate (APR).
 _varlist_ should include _depvar_ _treatrvar_ _instrvar_ _covariates_ in order.
-Here, _depvar_ is binary outcome (_y_), _treatrvar_ is binary treatment (_t_), 
-_instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional. 
+Here, _depvar_ is binary outcomes (_y_), _treatrvar_ is binary treatment (_t_), 
+_instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the upper bound ({cmd:theta_U}) on the APR is defined by 
+- Without _x_, the upper bound ({cmd:theta_U}) on the APR is defined by 
 
 	{cmd:theta_U} = {E[{it:A}|{it:z}=1] - E[{it:B}|{it:z}=0]}/{1 - E[{it:B}|{it:z}=0]},
 
@@ -44,7 +42,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 3. {cmd:theta_U} is computed using the estimates obtained above.
 4. The standard error is computed via STATA command __nlcom__. 
 
-- If _x_ are present, the upper bound ({cmd:theta_U}) on the APR is defined by 
+- With _x_, the upper bound ({cmd:theta_U}) on the APR is defined by 
 
 	{cmd:theta_U} = E[{cmd:theta_U}({it:x})],
 	
@@ -77,7 +75,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model.
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The dependent variable is 
 either {it:A} or {it:B}. 
 The default option is "no_interaction" between _z_ and _x_. 
@@ -90,7 +88,7 @@ Remarks
 
 It is recommended to use this package's command __persuasio__ instead of calling __aprub__ directly.
 
-Examples 
+Examples
 --------
 
 We first call the dataset included in the package.
@@ -99,12 +97,16 @@ We first call the dataset included in the package.
 
 The first example estimates the upper bound on the APR without covariates.
 		
-		. aprub voteddem_all post
+		. aprub voteddem_all readsome post
 
 The second example adds a covariate.
 
-		. aprub voteddem_all post MZwave2
+		. aprub voteddem_all readsome post MZwave2
 
+The third example estimates the upper bound by the covariate.		
+		
+        . by MZwave2,sort: aprub voteddem_all readsome post
+		
 Stored results
 --------------
 
@@ -155,7 +157,7 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop aprub
-program aprub, eclass
+program aprub, eclass sortpreserve byable(recall)
 
 	version 14.2
 	

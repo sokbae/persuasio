@@ -1,13 +1,10 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
 
 {title:Title}
 
-{phang}{cmd:persuasio4ytz} {hline 2} Conducts causal inference on persuasive effects 
-for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
+{phang}{cmd:persuasio4ytz} {hline 2} Conduct causal inference on persuasive effects 
+for binary outcomes {it:y}, binary treaments {it:t} and binary instruments {it:z}
 
 
 {title:Syntax}
@@ -30,20 +27,20 @@ for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
 {cmd:persuasio4ytz} conducts causal inference on persuasive effects.
 
 {p 4 4 2}
-It is assumed that binary outcome {it:y}, binary treatment {it:t}, and binary instrument {it:z} are observed. 
+It is assumed that binary outcomes {it:y}, binary treatments {it:t}, and binary instruments {it:z} are observed. 
 This command is for the case when persuasive treatment ({it:t}) is observed, 
 using estimates of the lower and upper bounds on the average persuation rate (APR) via 
 this package{c 39}s commands {cmd:aprlb} and {cmd:aprub}.
 
 {p 4 4 2}
 {it:varlist} should include {it:depvar} {it:treatvar} {it:instrvar} {it:covariates} in order. 
-Here, {it:depvar} is binary outcome ({it:y}), {it:treatvar} is binary treatment,
-{it:instrvar} is binary instrument ({it:z}), and {it:covariates} ({it:x}) are optional. 
+Here, {it:depvar} is binary outcomes ({it:y}), {it:treatvar} is binary treatments,
+{it:instrvar} is binary instruments ({it:z}), and {it:covariates} ({it:x}) are optional. 
 
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+{break}    - Without {it:x}, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)},
 	
@@ -59,7 +56,7 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {p 4 4 2}
 	The lower bound is estimated by the following procedure:
 	
-{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing {it:y} on {it:z}.
+{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0) are estimated by regressing {it:y} on {it:z}.
 {break}    2. {cmd:theta_L} is computed using the estimates obtained above.
 {break}    3. The standard error is computed via STATA command {bf:nlcom}. 
 
@@ -74,14 +71,14 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {p 4 4 2}
 	Then, a confidence interval for the APR is set by 
 
-{p 8 8 2}		[ {it:est_lb} - {it:cv} * {it:se_lb} , {it:est_ub} - {it:cv} * {it:se_ub} ],
+{p 8 8 2}		[ {it:est_lb} - {it:cv} * {it:se_lb} , {it:est_ub} + {it:cv} * {it:se_ub} ],
 	
 {p 4 4 2}
 where {it:est_lb} and {it:est_ub} are the estimates of the lower and upper bounds, 
 {it:se_lb} and {it:se_ub} are the corresponding standard errors, and 
 {it:cv} is the critical value obtained via the method of Stoye (2009).
 	
-{break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+{break}    - With {it:x}, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
@@ -163,7 +160,7 @@ The bootstrap procedure is implemented via STATA command {cmd:bootstrap}.
 {cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x}. 
 
 {p 4 4 2}
-This option is only releveant when {it:x} is present.
+This option is only relevant when {it:x} is present.
 The default option is "no_interaction" between {it:z} and {it:x}. 
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed.
 
@@ -175,10 +172,10 @@ When "interaction" is selected, full interactions between {it:z} and {it:x} are 
 The default option is {cmd:method}("normal").
 By the naure of identification, one-sided confidence intervals are produced. 
 
-{p 4 8 2}1. When {it:x} are present, it needs to be set as {cmd:method}("bootstrap"); 
+{p 4 8 2}1. When {it:x} is present, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.
 	
-{p 4 8 2}2. When {it:x} are absent, both options yield non-missing confidence intervals.
+{p 4 8 2}2. When {it:x} is absent, both options yield non-missing confidence intervals.
 	
 {cmd:nboot}(#) chooses the number of bootstrap replications.
 
@@ -194,13 +191,13 @@ It is only relevant when {cmd:method}("bootstrap") is selected.
 {p 4 4 2}
 It is recommended to use {cmd:nboot}(#) with # at least 1000. 
 A default choice of 50 is meant to check the code initially 
-because it may take a long time to run the bootstrap part when there are a large number of covariates.
+because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
 
 
-{title:Examples }
+{title:Examples}
 
 {p 4 4 2}
 We first call the dataset included in the package.
@@ -231,9 +228,9 @@ The third example conducts bootstrap inference on the APR with a covariate, MZwa
 
 {p 4 4 2}{bf:Matrices}
 
-{p 8 8 2} {bf:e(lb_est)}: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, ub]
+{p 8 8 2} {bf:e(apr_est)}: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, ub]
 
-{p 8 8 2} {bf:e(lb_ci)}: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, ub_ci] 
+{p 8 8 2} {bf:e(apr_ci)}: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, ub_ci] 
 
 
 {p 4 4 2}{bf:Macros}

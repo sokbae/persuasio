@@ -1,13 +1,10 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
 
 {title:Title}
 
-{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conducts causal inference on the local persuasion rate 
-for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
+{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conduct causal inference on the local persuasion rate 
+for binary outcomes {it:y}, binary treaments {it:t} and binary instruments {it:z}
 
 
 {title:Syntax}
@@ -30,7 +27,7 @@ for binary outcome {it:y}, binary treament {it:t} and binary instrument {it:z}
 {cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
 
 {p 4 4 2}
-It is assumed that binary outcome {it:y}, binary treatment {it:t}, and binary instrument {it:z} are observed. 
+It is assumed that binary outcomes {it:y}, binary treatments {it:t}, and binary instruments {it:z} are observed. 
 This command is for the case when persuasive treatment ({it:t}) is observed, 
 using estimates of the local persuation rate (LPR) via 
 this package{c 39}s command {cmd:lprlb4ytz}.
@@ -43,7 +40,7 @@ Here, {it:depvar} is binary outcome ({it:y}), {it:treatvar} is binary treatment,
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the LPR is defined by 
+{break}    - Without {it:x}, the LPR is defined by 
 
 	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
@@ -56,7 +53,7 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 
 {break}    5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 
-{break}    - If {it:x} are present, the LPR is defined by 
+{break}    - With {it:x}, the LPR is defined by 
 
 	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
@@ -104,7 +101,7 @@ Alternatively, if {cmd:model}("interaction") is selected,
 {cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x}. 
 
 {p 4 4 2}
-This option is only releveant when {it:x} is present.
+This option is only relevant when {it:x} is present.
 The default option is "no_interaction" between {it:z} and {it:x}. 
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed.
 
@@ -133,7 +130,7 @@ It is only relevant when {cmd:method}("bootstrap") is selected.
 {p 4 4 2}
 It is recommended to use {cmd:nboot}(#) with # at least 1000. 
 A default choice of 50 is meant to check the code initially 
-because it may take a long time to run the bootstrap part when there are a large number of covariates.
+because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 

@@ -1,5 +1,5 @@
-foreach topic in persuasio4ytz2lpr { 
-*aprlb aprub calc4persuasio persuasio4yz persuasio4ytz lpr4ytz {
+foreach topic in aprlb aprub calc4persuasio persuasio4yz persuasio4ytz lpr4ytz persuasio4ytz2lpr { 
+*aprlb aprub calc4persuasio persuasio4yz persuasio4ytz lpr4ytz persuasio4ytz2lpr  {
     
 	markdoc `topic'.ado, export(sthlp) replace
 	

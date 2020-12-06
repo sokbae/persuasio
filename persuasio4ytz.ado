@@ -1,12 +1,10 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
-{phang}{cmd:persuasio4ytz} {hline 2} Conducts causal inference on persuasive effects 
-for binary outcome _y_, binary treament _t_ and binary instrument _z_
+{phang}{cmd:persuasio4ytz} {hline 2} Conduct causal inference on persuasive effects 
+for binary outcomes _y_, binary treaments _t_ and binary instruments _z_
 
 Syntax
 ------
@@ -28,18 +26,18 @@ Description
 
 {cmd:persuasio4ytz} conducts causal inference on persuasive effects.
 
-It is assumed that binary outcome _y_, binary treatment _t_, and binary instrument _z_ are observed. 
+It is assumed that binary outcomes _y_, binary treatments _t_, and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is observed, 
 using estimates of the lower and upper bounds on the average persuation rate (APR) via 
 this package's commands {cmd:aprlb} and {cmd:aprub}.
 
 _varlist_ should include _depvar_ _treatvar_ _instrvar_ _covariates_ in order. 
-Here, _depvar_ is binary outcome (_y_), _treatvar_ is binary treatment,
-_instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional. 
+Here, _depvar_ is binary outcomes (_y_), _treatvar_ is binary treatments,
+_instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- Without _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)},
 	
@@ -52,7 +50,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 
 	The lower bound is estimated by the following procedure:
 	
-1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing _y_ on _z_.
+1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0) are estimated by regressing _y_ on _z_.
 2. {cmd:theta_L} is computed using the estimates obtained above.
 3. The standard error is computed via STATA command __nlcom__. 
 
@@ -71,7 +69,7 @@ where _est_lb_ and _est_ub_ are the estimates of the lower and upper bounds,
 _se_lb_ and _se_ub_ are the corresponding standard errors, and 
 _cv_ is the critical value obtained via the method of Stoye (2009).
 	
-- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- With _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
@@ -138,7 +136,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
@@ -149,10 +147,10 @@ When "interaction" is selected, full interactions between _z_ and _x_ are allowe
 The default option is {cmd:method}("normal").
 By the naure of identification, one-sided confidence intervals are produced. 
 
-{p 4 8 2}1. When _x_ are present, it needs to be set as {cmd:method}("bootstrap"); 
+{p 4 8 2}1. When _x_ is present, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.
 	
-{p 4 8 2}2. When _x_ are absent, both options yield non-missing confidence intervals.
+{p 4 8 2}2. When _x_ is absent, both options yield non-missing confidence intervals.
 	
 {cmd:nboot}(#) chooses the number of bootstrap replications.
 
@@ -166,12 +164,12 @@ Remarks
 
 It is recommended to use {cmd:nboot}(#) with # at least 1000. 
 A default choice of 50 is meant to check the code initially 
-because it may take a long time to run the bootstrap part when there are a large number of covariates.
+because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
 
-Examples 
+Examples
 --------
 
 We first call the dataset included in the package.
@@ -195,9 +193,9 @@ Stored results
 
 ### Matrices
 
-> __e(lb_est)__: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, ub]
+> __e(apr_est)__: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, ub]
 
-> __e(lb_ci)__: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, ub_ci] 
+> __e(apr_ci)__: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, ub_ci] 
 
 
 ### Macros
@@ -227,7 +225,7 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop persuasio4ytz
-program persuasio4ytz, eclass
+program persuasio4ytz, eclass sortpreserve byable(recall)
 
 	version 14.2
 	
@@ -239,13 +237,13 @@ program persuasio4ytz, eclass
 	gettoken T varlist_without_YT : varlist_without_Y
 	gettoken Z X : varlist_without_YT
 		
-	quietly aprlb `Y' `Z' `X' `if' `in', model("`model'")
+	quietly aprlb `Y' `Z' `X' if `touse', model("`model'")
 		
 	tempname lb_coef lb_se
 	scalar `lb_coef' = e(lb_coef)
 	scalar `lb_se' = e(lb_se)
 	
-	quietly aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+	quietly aprub `Y' `T' `Z' `X' if `touse', model("`model'")
 		
 	tempname ub_coef ub_se
 	scalar `ub_coef' = e(ub_coef)
@@ -368,10 +366,10 @@ program persuasio4ytz, eclass
 		* lower bound
 		
 		if "`nboot'" != "" {
-			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' if `touse', model("`model'")
 		}
 		if "`nboot'" == "" {
-			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `Y' `Z' `X' if `touse', model("`model'")
 			
 		}
 		
@@ -382,10 +380,10 @@ program persuasio4ytz, eclass
 		* upper bound
 		
 		if "`nboot'" != "" {
-			bootstrap coef=e(ub_coef), reps(`nboot') level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(ub_coef), reps(`nboot') level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' if `touse', model("`model'")
 		}
 		if "`nboot'" == "" {
-			bootstrap coef=e(ub_coef), reps(50) level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(ub_coef), reps(50) level(`bs_level') notable nowarn: aprub `Y' `T' `Z' `X' if `touse', model("`model'")
 			
 		}
 		
@@ -423,8 +421,8 @@ program persuasio4ytz, eclass
 	matrix `ci_matrix' = (`lb_end',`ub_end')
 	
 	ereturn clear
-	ereturn matrix bound_est = `coef_matrix'
-	ereturn matrix bound_ci = `ci_matrix'
+	ereturn matrix apr_est = `coef_matrix'
+	ereturn matrix apr_ci = `ci_matrix'
 	ereturn local cilevel = (1-`alpha_level')*100
 	ereturn local inference_method "`method'"
 	

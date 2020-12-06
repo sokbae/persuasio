@@ -1,12 +1,9 @@
 /***
 
-_version 0.1.0_ 
-
-
 Title
 -----
 
-{phang}{cmd:lpr4ytz} {hline 2} Estimates the local persuasion rate
+{phang}{cmd:lpr4ytz} {hline 2} Estimate the local persuasion rate
 
 Syntax
 ------
@@ -26,12 +23,12 @@ Description
 
 __lpr4ytz__ estimates the local persuasion rate (LPR).
 _varlist_ should include _depvar_ _treatrvar_ _instrvar_ _covariates_ in order.
-Here, _depvar_ is binary outcome (_y_), _treatrvar_ is binary treatment (_t_), 
-_instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional. 
+Here, _depvar_ is binary outcomes (_y_), _treatrvar_ is binary treatments (_t_), 
+_instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the LPR is defined by 
+- Without _x_, the LPR is defined by 
 
 	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
@@ -42,7 +39,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 3. The LPR is obtained as the ratio.
 4. The standard error is computed via STATA command __nlcom__. 
 
-- If _x_ are present, the LPR is defined by 
+- With _x_, the LPR is defined by 
 
 	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
@@ -83,7 +80,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model.
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
@@ -101,7 +98,7 @@ We first call the dataset included in the package.
 
 		. use GKB, clear
 
-The first example estimates the upper bound on the APR without covariates.
+The first example estimates the LPR without covariates.
 		
 		. lpr4ytz voteddem_all readsome post
 
@@ -162,7 +159,7 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop lpr4ytz
-program lpr4ytz, eclass
+program lpr4ytz, eclass sortpreserve byable(recall)
 
 	version 14.2
 	

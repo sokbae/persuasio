@@ -1,12 +1,9 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
 
 {title:Title}
 
-{phang}{cmd:aprlb} {hline 2} Estimates the lower bound on the average persuasion rate
+{phang}{cmd:aprlb} {hline 2} Estimate the lower bound on the average persuasion rate
 
 
 {title:Syntax}
@@ -33,18 +30,18 @@ and {it:covariates} ({it:x}) are optional.
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+{break}    - Without {it:x}, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 {p 4 4 2}
 	The estimate and its standard error are obtained by the following procedure:
 	
-{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing {it:y} on {it:z}.
+{break}    1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0) are estimated by regressing {it:y} on {it:z}.
 {break}    2. {cmd:theta_L} is computed using the estimates obtained above.
 {break}    3. The standard error is computed via STATA command {bf:nlcom}. 
 
-{break}    - If {it:x} are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+{break}    - With {it:x}, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}({it:x})],
 	
@@ -83,7 +80,7 @@ Ater step 1, both options are followed by:
 {cmd:model}({it:string}) specifies a regression model of {it:y} on {it:z} and {it:x}. 
 
 {p 4 4 2}
-This option is only releveant when {it:x} is present.
+This option is only relevant when {it:x} is present.
 The default option is "no_interaction" between {it:z} and {it:x}. 
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; 
 this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
@@ -97,7 +94,7 @@ this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|
 It is recommended to use this package{c 39}s command {bf:persuasio} instead of calling {bf:aprlb} directly.
 
 
-{title:Examples }
+{title:Examples}
 
 {p 4 4 2}
 We first call the dataset included in the package.
@@ -116,6 +113,11 @@ The second example adds a covariate.
 
 {p 4 4 2}
 		. aprlb voteddem_all post MZwave2
+		
+{p 4 4 2}
+The third example estimates the lower bound by the covariate.		
+		
+        . by MZwave2, sort: aprlb voteddem_all post		
 
 
 {title:Stored results}

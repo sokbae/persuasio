@@ -1,7 +1,5 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
@@ -92,9 +90,9 @@ Stored results
 
 > __r(apr_ub)__: estimate of the upper bound on the average persuasion rate
 
-> __r(apr_lb)__: estimate of the lower bound on the average persuasion rate 
+> __r(lpr_lb)__: estimate of the lower bound on the local persuasion rate 
 
-> __r(apr_ub)__: estimate of the upper bound on the average persuasion rate
+> __r(lpr_ub)__: estimate of the upper bound on the local persuasion rate
 
 Authors
 -------
@@ -148,8 +146,8 @@ program calc4persuasio, rclass
 	
 		return scalar apr_lb = `lb'
 		return scalar apr_ub = `ub'
-		return scalar lbr_lb = `llb'
-		return scalar lbr_ub = 1
+		return scalar lpr_lb = `llb'
+		return scalar lpr_ub = 1
 		
 		display as text "{hline 25}{c TT}{hline 37}"
 

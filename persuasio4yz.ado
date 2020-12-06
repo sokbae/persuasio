@@ -1,11 +1,9 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
-{phang}{cmd:persuasio4yz} {hline 2} Conducts causal inference on persuasive effects for binary outcome _y_ and binary instrument _z_
+{phang}{cmd:persuasio4yz} {hline 2} Conduct causal inference on persuasive effects for binary outcomes _y_ and binary instruments _z_
 
 Syntax
 ------
@@ -27,7 +25,7 @@ Description
 
 {cmd:persuasio4yz} conducts causal inference on persuasive effects.
 
-It is assumed that binary outcome _y_ and binary instrument _z_ are observed. 
+It is assumed that binary outcomes _y_ and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is unobserved, 
 using estimates of the lower bound on the average persuation rate (APR) via 
 this package's command {cmd:aprlb}.
@@ -38,13 +36,13 @@ When treatment _t_ is unobserved, the upper bound on the APR is simply 1.
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- Without _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 	The estimate and confidence interval are obtained by the following procedure:
 	
-1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing _y_ on _z_.
+1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0) are estimated by regressing _y_ on _z_.
 2. {cmd:theta_L} is computed using the estimates obtained above.
 3. The standard error is computed via STATA command __nlcom__. 
 4. Then, a confidence interval for the APR is set by 
@@ -53,7 +51,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 	
 where _est_ is the estimate, _se_ is the standard error, and _cv_ is the one-sided standard normal critical value (e.g., _cv_ = 1.645 for {cmd:level}(95)).
 	
-- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- With _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
@@ -90,7 +88,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed; 
 this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
@@ -102,10 +100,10 @@ this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|
 The default option is {cmd:method}("normal").
 By the naure of identification, one-sided confidence intervals are produced. 
 
-{p 4 8 2}1. When _x_ are present, it needs to be set as {cmd:method}("bootstrap"); 
+{p 4 8 2}1. When _x_ is present, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.
 	
-{p 4 8 2}2. When _x_ are absent, both options yield non-missing confidence intervals.
+{p 4 8 2}2. When _x_ is absent, both options yield non-missing confidence intervals.
 	
 {cmd:nboot}(#) chooses the number of bootstrap replications.
 
@@ -119,12 +117,12 @@ Remarks
 
 It is recommended to use {cmd:nboot}(#) with # at least 1000. 
 A default choice of 50 is meant to check the code initially 
-because it may take a long time to run the bootstrap part when there are a large number of covariates.
+because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
 
-Examples 
+Examples
 --------
 
 We first call the dataset included in the package.
@@ -148,9 +146,9 @@ Stored results
 
 ### Matrices
 
-> __e(lb_est)__: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, 1]
+> __e(apr_est)__: (1*2 matrix) bounds on the average persuasion rate in the form of [lb, 1]
 
-> __e(lb_ci)__: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, 1] 
+> __e(apr_ci)__: (1*2 matrix) confidence interval for the average persuasion rate in the form of [lb_ci, 1] 
 
 
 ### Macros
@@ -180,13 +178,15 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop persuasio4yz
-program persuasio4yz, eclass
+program persuasio4yz, eclass sortpreserve byable(recall)
 
 	version 14.2
 	
 	syntax varlist (min=2) [if] [in] [, level(cilevel) model(string) method(string) nboot(numlist >0 integer) title(string)]
-		
-	quietly aprlb `varlist' `if' `in', model("`model'")
+	
+	marksample touse
+			
+	quietly aprlb `varlist' if `touse', model("`model'")
 	
 	* displaying results
 	if "`title'" != "" {
@@ -215,7 +215,7 @@ program persuasio4yz, eclass
 		* Displaying results
 	    display " "
 		display as text "{hline 65}"
-		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
+		display "{bf:persuasio4yz:} Causal inference on the average persuasion rate"
 		display " when binary outcomes and binary instruments are observed"
 		display as text "{hline 65}"
 		display " "
@@ -252,7 +252,7 @@ program persuasio4yz, eclass
 	    * Displaying results
 	    display " "
 		display as text "{hline 65}"
-		display "{bf:persuasio4yz:} Causal inference on the Average Persuasion Rate"
+		display "{bf:persuasio4yz:} Causal inference on the average persuasion rate"
 		display " when binary outcomes and binary instruments are observed"
 		display " along with covariates"
 		display as text "{hline 65}"
@@ -277,10 +277,10 @@ program persuasio4yz, eclass
 		local bs_level = round(10000*(1-(1-`alpha_level')*2))/100 /* level for bootstrap */
 		
 		if "`nboot'" != "" {
-			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `varlist' `if' `in', model("`model'") 
+			bootstrap coef=e(lb_coef), reps(`nboot') level(`bs_level') notable nowarn: aprlb `varlist' if `touse', model("`model'") 
 		}
 		if "`nboot'" == "" {
-			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `varlist' `if' `in', model("`model'")
+			bootstrap coef=e(lb_coef), reps(50) level(`bs_level') notable nowarn: aprlb `varlist' if `touse', model("`model'")
 			
 		}
 		
@@ -317,8 +317,8 @@ program persuasio4yz, eclass
 	matrix `lb_ci_matrix' = (`lower_bound_ci',1)
 	
 	ereturn clear
-	ereturn matrix lb_est = `lb_coef_matrix'
-	ereturn matrix lb_ci = `lb_ci_matrix'
+	ereturn matrix apr_est = `lb_coef_matrix'
+	ereturn matrix apr_ci = `lb_ci_matrix'
 	ereturn local cilevel = `alpha_level'*100
 	ereturn local inference_method "`method'"
 	

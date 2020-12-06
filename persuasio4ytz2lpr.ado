@@ -1,12 +1,10 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
-{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conducts causal inference on the local persuasion rate 
-for binary outcome _y_, binary treament _t_ and binary instrument _z_
+{phang}{cmd:persuasio4ytz2lpr} {hline 2} Conduct causal inference on the local persuasion rate 
+for binary outcomes _y_, binary treaments _t_ and binary instruments _z_
 
 Syntax
 ------
@@ -28,7 +26,7 @@ Description
 
 {cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
 
-It is assumed that binary outcome _y_, binary treatment _t_, and binary instrument _z_ are observed. 
+It is assumed that binary outcomes _y_, binary treatments _t_, and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is observed, 
 using estimates of the local persuation rate (LPR) via 
 this package's command {cmd:lprlb4ytz}.
@@ -39,7 +37,7 @@ _instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional.
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the LPR is defined by 
+- Without _x_, the LPR is defined by 
 
 	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
@@ -51,7 +49,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 4. The standard error is computed via STATA command __nlcom__. 
 5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 
-- If _x_ are present, the LPR is defined by 
+- With _x_, the LPR is defined by 
 
 	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
@@ -92,7 +90,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
@@ -118,7 +116,7 @@ Remarks
 
 It is recommended to use {cmd:nboot}(#) with # at least 1000. 
 A default choice of 50 is meant to check the code initially 
-because it may take a long time to run the bootstrap part when there are a large number of covariates.
+because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
@@ -179,7 +177,7 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop persuasio4ytz2lpr
-program persuasio4ytz2lpr, eclass
+program persuasio4ytz2lpr, eclass sortpreserve byable(recall)
 
 	version 14.2
 	
@@ -191,7 +189,7 @@ program persuasio4ytz2lpr, eclass
 	gettoken T varlist_without_YT : varlist_without_Y
 	gettoken Z X : varlist_without_YT
 		
-	quietly lpr4ytz `Y' `T' `Z' `X' `if' `in', model("`model'")
+	quietly lpr4ytz `Y' `T' `Z' `X' if `touse', model("`model'")
 		
 	tempname lpr_coef lpr_se
 	scalar `lpr_coef' = e(lpr_coef)
@@ -293,10 +291,10 @@ program persuasio4ytz2lpr, eclass
 		* lower bound
 		
 		if "`nboot'" != "" {
-			bootstrap coef=e(lpr_coef), reps(`nboot') level(`bs_level') notable nowarn: lpr4ytz `Y' `T' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(lpr_coef), reps(`nboot') level(`bs_level') notable nowarn: lpr4ytz `Y' `T' `Z' `X' if `touse', model("`model'")
 		}
 		if "`nboot'" == "" {
-			bootstrap coef=e(lpr_coef), reps(50) level(`bs_level') notable nowarn: lpr4ytz `Y' `T' `Z' `X' `if' `in', model("`model'")
+			bootstrap coef=e(lpr_coef), reps(50) level(`bs_level') notable nowarn: lpr4ytz `Y' `T' `Z' `X' if `touse', model("`model'")
 			
 		}
 		

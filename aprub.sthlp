@@ -1,12 +1,9 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
 
 {title:Title}
 
-{phang}{cmd:aprub} {hline 2} Estimates the upper bound on the average persuasion rate
+{phang}{cmd:aprub} {hline 2} Estimate the upper bound on the average persuasion rate
 
 
 {title:Syntax}
@@ -27,13 +24,13 @@
 {p 4 4 2}
 {bf:aprub} estimates the upper bound on the average persuation rate (APR).
 {it:varlist} should include {it:depvar} {it:treatrvar} {it:instrvar} {it:covariates} in order.
-Here, {it:depvar} is binary outcome ({it:y}), {it:treatrvar} is binary treatment ({it:t}), 
-{it:instrvar} is binary instrument ({it:z}), and {it:covariates} ({it:x}) are optional. 
+Here, {it:depvar} is binary outcomes ({it:y}), {it:treatrvar} is binary treatment ({it:t}), 
+{it:instrvar} is binary instruments ({it:z}), and {it:covariates} ({it:x}) are optional. 
 
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the upper bound ({cmd:theta_U}) on the APR is defined by 
+{break}    - Without {it:x}, the upper bound ({cmd:theta_U}) on the APR is defined by 
 
 	{cmd:theta_U} = {E[{it:A}|{it:z}=1] - E[{it:B}|{it:z}=0]}/{1 - E[{it:B}|{it:z}=0]},
 
@@ -49,7 +46,7 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {break}    3. {cmd:theta_U} is computed using the estimates obtained above.
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 
 
-{break}    - If {it:x} are present, the upper bound ({cmd:theta_U}) on the APR is defined by 
+{break}    - With {it:x}, the upper bound ({cmd:theta_U}) on the APR is defined by 
 
 	{cmd:theta_U} = E[{cmd:theta_U}({it:x})],
 	
@@ -89,7 +86,7 @@ Ater step 1, both options are followed by:
 {cmd:model}({it:string}) specifies a regression model.
 
 {p 4 4 2}
-This option is only releveant when {it:x} is present.
+This option is only relevant when {it:x} is present.
 The dependent variable is 
 either {it:A} or {it:B}. 
 The default option is "no_interaction" between {it:z} and {it:x}. 
@@ -104,7 +101,7 @@ When "interaction" is selected, full interactions between {it:z} and {it:x} are 
 It is recommended to use this package{c 39}s command {bf:persuasio} instead of calling {bf:aprub} directly.
 
 
-{title:Examples }
+{title:Examples}
 
 {p 4 4 2}
 We first call the dataset included in the package.
@@ -116,14 +113,19 @@ We first call the dataset included in the package.
 The first example estimates the upper bound on the APR without covariates.
 		
 {p 4 4 2}
-		. aprub voteddem_all post
+		. aprub voteddem_all readsome post
 
 {p 4 4 2}
 The second example adds a covariate.
 
 {p 4 4 2}
-		. aprub voteddem_all post MZwave2
+		. aprub voteddem_all readsome post MZwave2
 
+{p 4 4 2}
+The third example estimates the upper bound by the covariate.		
+		
+        . by MZwave2,sort: aprub voteddem_all readsome post
+		
 
 {title:Stored results}
 

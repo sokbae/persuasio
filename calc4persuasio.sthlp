@@ -1,8 +1,5 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
 
 {title:Title}
 
@@ -106,9 +103,9 @@ Finally, we compare this with the following.
 
 {p 8 8 2} {bf:r(apr_ub)}: estimate of the upper bound on the average persuasion rate
 
-{p 8 8 2} {bf:r(apr_lb)}: estimate of the lower bound on the average persuasion rate 
+{p 8 8 2} {bf:r(lpr_lb)}: estimate of the lower bound on the local persuasion rate 
 
-{p 8 8 2} {bf:r(apr_ub)}: estimate of the upper bound on the average persuasion rate
+{p 8 8 2} {bf:r(lpr_ub)}: estimate of the upper bound on the local persuasion rate
 
 
 {title:Authors}

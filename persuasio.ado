@@ -2,6 +2,8 @@
 
 _version 0.1.0_ 
 
+[To be updated]
+
 Title
 -----
 
@@ -39,7 +41,7 @@ _instrvar_ is binary instrument (_z_), and _covariates_ (_x_) are optional.
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- Without _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)},
 	
@@ -71,7 +73,7 @@ where _est_lb_ and _est_ub_ are the estimates of the lower and upper bounds,
 _se_lb_ and _se_ub_ are the corresponding standard errors, and 
 _cv_ is the critical value obtained via the method of Stoye (2009).
 	
-- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- With _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}(x)],
 	
@@ -138,7 +140,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
@@ -171,7 +173,7 @@ The bootstrap confidence interval is based on percentile bootstrap.
 A use of normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
 
-Examples 
+Examples
 --------
 
 We first call the dataset included in the package.
@@ -227,7 +229,7 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop persuasio
-program persuasio, eclass
+program persuasio, eclass sortpreserve byable(recall)
 
 	version 14.2
 	
@@ -239,18 +241,18 @@ program persuasio, eclass
 		
 	if "`sampletype'" == "ytz" {
 			
-		persuasio4ytz `varlist' `if' `in', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
+		persuasio4ytz `varlist' if `touse', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
 	}
 	
 	if "`sampletype'" == "ytz2lpr" {
 			
-		persuasio4ytz2lpr `varlist' `if' `in', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
+		persuasio4ytz2lpr `varlist' if `touse', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
 	}
 	
 		
 	if "`sampletype'" == "yz" {
 			
-		persuasio4yz `varlist' `if' `in', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
+		persuasio4yz `varlist' if `touse', level(`level') model("`model'") method("`method'") nboot(`nboot') title("`title'")	
 	}
 		
 

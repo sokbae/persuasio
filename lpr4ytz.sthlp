@@ -1,13 +1,9 @@
 {smcl}
 
-{p 4 4 2}
-{it:version 0.1.0} 
-
-
 
 {title:Title}
 
-{phang}{cmd:lpr4ytz} {hline 2} Estimates the local persuasion rate
+{phang}{cmd:lpr4ytz} {hline 2} Estimate the local persuasion rate
 
 
 {title:Syntax}
@@ -28,13 +24,13 @@
 {p 4 4 2}
 {bf:lpr4ytz} estimates the local persuasion rate (LPR).
 {it:varlist} should include {it:depvar} {it:treatrvar} {it:instrvar} {it:covariates} in order.
-Here, {it:depvar} is binary outcome ({it:y}), {it:treatrvar} is binary treatment ({it:t}), 
-{it:instrvar} is binary instrument ({it:z}), and {it:covariates} ({it:x}) are optional. 
+Here, {it:depvar} is binary outcomes ({it:y}), {it:treatrvar} is binary treatments ({it:t}), 
+{it:instrvar} is binary instruments ({it:z}), and {it:covariates} ({it:x}) are optional. 
 
 {p 4 4 2}
 There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are present.
 
-{break}    - If {it:x} are absent, the LPR is defined by 
+{break}    - Without {it:x}, the LPR is defined by 
 
 	{cmd:LPR} = {Pr({it:y}=1|{it:z}=1)-Pr({it:y}=1|{it:z}=0)}/{Pr[{it:y}=0,{it:t}=0|{it:z}=0]-Pr[{it:y}=0,{it:t}=0|{it:z}=1]}.
 	
@@ -46,7 +42,7 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {break}    3. The LPR is obtained as the ratio.
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 
 
-{break}    - If {it:x} are present, the LPR is defined by 
+{break}    - With {it:x}, the LPR is defined by 
 
 	{cmd:LPR} = E[{cmd:LPR}({it:x}){e(1|x) - e(0|x)}]/E[e(1|x) - e(0|x)]
 	
@@ -95,7 +91,7 @@ Alternatively, if {cmd:model}("interaction") is selected,
 {cmd:model}({it:string}) specifies a regression model.
 
 {p 4 4 2}
-This option is only releveant when {it:x} is present.
+This option is only relevant when {it:x} is present.
 The default option is "no_interaction" between {it:z} and {it:x}. 
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed.
 
@@ -117,7 +113,7 @@ We first call the dataset included in the package.
 		. use GKB, clear
 
 {p 4 4 2}
-The first example estimates the upper bound on the APR without covariates.
+The first example estimates the LPR without covariates.
 		
 {p 4 4 2}
 		. lpr4ytz voteddem_all readsome post

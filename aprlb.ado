@@ -1,11 +1,9 @@
 /***
 
-_version 0.1.0_ 
-
 Title
 -----
 
-{phang}{cmd:aprlb} {hline 2} Estimates the lower bound on the average persuasion rate
+{phang}{cmd:aprlb} {hline 2} Estimate the lower bound on the average persuasion rate
 
 Syntax
 ------
@@ -30,17 +28,17 @@ and _covariates_ (_x_) are optional.
 
 There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are present.
 
-- If _x_ are absent, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- Without _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = {Pr({it:y}=1|{it:z}=1) - Pr({it:y}=1|{it:z}=0)}/{1 - Pr({it:y}=1|{it:z}=0)}.
 
 	The estimate and its standard error are obtained by the following procedure:
 	
-1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0)) are estimated by regressing _y_ on _z_.
+1. Pr({it:y}=1|{it:z}=1) and Pr({it:y}=1|{it:z}=0) are estimated by regressing _y_ on _z_.
 2. {cmd:theta_L} is computed using the estimates obtained above.
 3. The standard error is computed via STATA command __nlcom__. 
 
-- If _x_ are present, the lower bound ({cmd:theta_L}) on the APR is defined by 
+- With _x_, the lower bound ({cmd:theta_L}) on the APR is defined by 
 
 	{cmd:theta_L} = E[{cmd:theta_L}({it:x})],
 	
@@ -72,7 +70,7 @@ Options
 
 {cmd:model}(_string_) specifies a regression model of _y_ on _z_ and _x_. 
 
-This option is only releveant when _x_ is present.
+This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed; 
 this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
@@ -84,7 +82,7 @@ Remarks
 
 It is recommended to use this package's command __persuasio__ instead of calling __aprlb__ directly.
 
-Examples 
+Examples
 --------
 
 We first call the dataset included in the package.
@@ -98,6 +96,10 @@ The first example estimates the lower bound on the APR without covariates.
 The second example adds a covariate.
 
 		. aprlb voteddem_all post MZwave2
+		
+The third example estimates the lower bound by the covariate.		
+		
+        . by MZwave2, sort: aprlb voteddem_all post		
 
 Stored results
 --------------
@@ -147,14 +149,14 @@ Identifying the Effect of Persuasion,
 
 ***/
 capture program drop aprlb
-program aprlb, eclass
+program aprlb, eclass sortpreserve byable(recall)
 
 	version 14.2
 	
 	syntax varlist (min=2) [if] [in] [, model(string) title(string)]
-	
+		
 	marksample touse
-	
+		
 	gettoken Y varlist_without_Y : varlist
 	gettoken Z X : varlist_without_Y
 	
@@ -185,7 +187,8 @@ program aprlb, eclass
 	* if there are no covariates (X) 
 	if "`X'" == "" { 
 	
-	quietly reg `Y' `Z' if `touse', robust	
+	quietly reg `Y' `Z' if `touse', robust
+		
 	local nobs = e(N)
 	
 	quietly nlcom lower_bound:_b[`Z']/(1-_b[_cons])
@@ -219,14 +222,14 @@ program aprlb, eclass
 		if "`model'" == "" | "`model'" == "no_interaction" { 
 	
 		quietly reg `Y' `Z' `X' if `touse', robust
-		
+
 		tempname bhat b_coef
 		
 		matrix `bhat' = e(b)
 		scalar `b_coef' = `bhat'[1,1]
 		
 		quietly predict `yhat' if `touse'
-		
+				
 		gen `yhat1' = `yhat' + `b_coef' - `b_coef'*`Z'
 		gen `yhat0' = `yhat' - `b_coef'*`Z'
 	
@@ -234,11 +237,13 @@ program aprlb, eclass
 		
 		if "`model'" == "interaction" { 
 	
-		quietly reg `Y' `X' if `Z'==1 & `touse', robust
-		quietly predict `yhat1' if `touse'
-	
-		quietly reg `Y' `X' if `Z'==0 & `touse', robust
-		quietly predict `yhat0' if `touse'
+			quietly {
+			reg `Y' `X' if `Z'==1 & `touse', robust
+			predict `yhat1' if `touse'	
+			reg `Y' `X' if `Z'==0 & `touse', robust
+			predict `yhat0' if `touse'
+			}
+		
 		}
 		
 	quietly replace `yhat1' = min(max(`yhat1',0),1)
@@ -250,7 +255,7 @@ program aprlb, eclass
 	gen `thetahat' = `thetahat_num'/`thetahat_den'
     
 	quietly sum `thetahat' if `touse'
-	
+		
 	tempname lower_bound_coef lower_bound_se
 	
 	local nobs = r(N)
