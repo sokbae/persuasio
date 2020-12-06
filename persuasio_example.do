@@ -15,7 +15,7 @@
 * We would like to thank the authors of the original study 
 * to make their data available online. 
 *
-* Modified on 23 November 2020
+* Modified on 6 December 2020
 ******************************************************************************* 
 
 clear
@@ -166,13 +166,18 @@ use GKB, clear
 **** Examples for persuasio.ado *****
 *************************************
 
-persuasio ytz voteddem_all readsome post, level(80) method("normal")
+* The first example conducts inference on APR when y,t,z are observed.
+	persuasio apr voteddem_all readsome post, level(80) method("normal")
 
-persuasio ytz2lpr voteddem_all readsome post, level(80) method("normal")
+* The second example conducts bootstrap inference on LPR when y,t,z are observed.		
+	persuasio lpr voteddem_all readsome post, level(80) method("bootstrap") nboot(100)
 
-persuasio yz voteddem_all post, level(80) method("normal")
+* The third example conducts bootstrap iinference on APR and LPR when y,z are observed with a covariate, MZwave2, interacting with the instrument, post. 		
+	persuasio yz voteddem_all post MZwave2, level(80) model("interaction") method("bootstrap") nboot(100)
 
+* The fourth example considers the case when we have summary statistics on Pr(y=1|z) and/or Pr(t=1|z).
+	persuasio calc voteddem_all_1 voteddem_all_0 readsome_1 readsome_0
 
-
+log close
 	
 	
