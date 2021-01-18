@@ -55,7 +55,7 @@ When "interaction" is selected, full interactions between _z_ and _x_ are allowe
 {cmd:method}(_string_) refers the method for inference.
 
 The default option is {cmd:method}("normal").
-By the naure of identification, one-sided confidence intervals are produced. 
+By the nature of identification, one-sided confidence intervals are produced. 
 
 {p 4 8 2}1. When _x_ is present, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.

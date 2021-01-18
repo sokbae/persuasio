@@ -28,7 +28,7 @@
 {p 4 4 2}
 It is assumed that binary outcomes {it:y} and binary instruments {it:z} are observed. 
 This command is for the case when persuasive treatment ({it:t}) is unobserved, 
-using estimates of the lower bound on the average persuation rate (APR) via 
+using an estimate of the lower bound on the average persuation rate (APR) via 
 this package{c 39}s command {cmd:aprlb}.
 
 {p 4 4 2}

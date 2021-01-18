@@ -24,12 +24,12 @@ Syntax
 Description
 -----------
 
-{cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
+{phang}{cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
 
 It is assumed that binary outcomes _y_, binary treatments _t_, and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is observed, 
-using estimates of the local persuation rate (LPR) via 
-this package's command {cmd:lprlb4ytz}.
+using estimates of the local persuasion rate (LPR) via 
+this package's command {cmd:lpr4ytz}.
 
 _varlist_ should include _depvar_ _treatvar_ _instrvar_ _covariates_ in order. 
 Here, _depvar_ is binary outcome (_y_), _treatvar_ is binary treatment,
@@ -47,7 +47,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on _z_.
 3. The LPR is obtained as the ratio.
 4. The standard error is computed via STATA command __nlcom__. 
-5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
+{p 4 8 2}5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 
 - With _x_, the LPR is defined by 
 
@@ -67,9 +67,9 @@ If {cmd:model}("no_interaction") is selected (default choice),
 2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on _z_ and _x_.
 3. The LPR is obtained as the ratio.
 4. The standard error is computed via STATA command __nlcom__. 	
-5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
+{p 4 8 2}5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 	
-Note that in this case, {cmd:LPR}({it:x}) does not depend on _x_, because of the linear regression model specification.
+Note that in this case, {cmd:LPR}({it:x}) does not depend on _x_ because of the linear regression model specification.
 	
 Alternatively, if {cmd:model}("interaction") is selected,
 	

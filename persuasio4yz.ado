@@ -27,7 +27,7 @@ Description
 
 It is assumed that binary outcomes _y_ and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is unobserved, 
-using estimates of the lower bound on the average persuation rate (APR) via 
+using an estimate of the lower bound on the average persuation rate (APR) via 
 this package's command {cmd:aprlb}.
 
 _varlist_ should include _depvar_ _instrvar_ _covariates_ in order. Here, _depvar_ is binary outcomes (_y_), _instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 

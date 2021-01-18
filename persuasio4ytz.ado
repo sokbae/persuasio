@@ -28,7 +28,7 @@ Description
 
 It is assumed that binary outcomes _y_, binary treatments _t_, and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is observed, 
-using estimates of the lower and upper bounds on the average persuation rate (APR) via 
+using estimates of the lower and upper bounds on the average persuasion rate (APR) via 
 this package's commands {cmd:aprlb} and {cmd:aprub}.
 
 _varlist_ should include _depvar_ _treatvar_ _instrvar_ _covariates_ in order. 
@@ -54,7 +54,7 @@ There are two cases: (i) _covariates_ are absent and (ii) _covariates_ are prese
 2. {cmd:theta_L} is computed using the estimates obtained above.
 3. The standard error is computed via STATA command __nlcom__. 
 
-	The upper boound is stimated by the following procedure:
+	The upper bound is estimated by the following procedure:
 	
 1. E[{it:A}|{it:z}=1] is estimated by regressing {it:A} on _z_.
 2. E[{it:B}|{it:z}=0] is estimated by regressing {it:B} on _z_.
@@ -96,12 +96,12 @@ Alternatively, if {cmd:model}("interaction") is selected,
 1a. Pr({it:y}=1|{it:z}=1,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 1.
 1b. Pr({it:y}=1|{it:z}=0,{it:x}) is estimated by regressing _y_ on _x_ given _z_ = 0.
 	
-Ater step 1, both options are followed by:
+After step 1, both options are followed by:
 	
 2. For each x in the estimation sample, {cmd:theta_L}(x) is evaluated.
 3. The estimates of {cmd:theta_L}(x) are averaged to estimate {cmd:theta_L}.
 
-The upper boound is stimated by the following procedure:
+The upper bound is estimated by the following procedure:
 	
 If {cmd:model}("no_interaction") is selected (default choice),
 	
@@ -113,14 +113,14 @@ Alternatively, if {cmd:model}("interaction") is selected,
 1. E[{it:A}|{it:z}=1,{it:x}] is estimated by regressing {it:A} on _x_ given _z_ = 1.
 2. E[{it:B}|{it:z}=0,{it:x}] is estimated by regressing {it:B} on _x_ given _z_ = 0.
 	
-Ater step 1, both options are followed by:
+After step 1, both options are followed by:
 	
 3. For each _x_ in the estimation sample, {cmd:theta_U}({it:x}) is evaluated.
 4. The estimates of {cmd:theta_U}({it:x}) are averaged to estimate {cmd:theta_U}.
 
 Then, a bootstrap confidence interval for the APR is set by 
 
-{p 8 8 2}		[ bs_est_lb(_alpha_) , bs_est_ub(_alpha_) ],
+{p 8 8 2}		[ bs_est_lb(_alpha_) , bs_est_ub(1 - _alpha_) ],
 		
 where bs_est_lb(_alpha_) is the _alpha_ quantile of the bootstrap estimates of {cmd:theta_L},
 	  bs_est_ub(_alpha_) is the 1 - _alpha_ quantile of the bootstrap estimates of {cmd:theta_U},
@@ -145,7 +145,7 @@ When "interaction" is selected, full interactions between _z_ and _x_ are allowe
 {cmd:method}(_string_) refers the method for inference.
 
 The default option is {cmd:method}("normal").
-By the naure of identification, one-sided confidence intervals are produced. 
+By the nature of identification, one-sided confidence intervals are produced. 
 
 {p 4 8 2}1. When _x_ is present, it needs to be set as {cmd:method}("bootstrap"); 
 otherwise, the confidence interval will be missing.
@@ -315,7 +315,7 @@ program persuasio4ytz, eclass sortpreserve byable(recall)
 		*/ _col(48) "`level'% Conf. Interval" 
         display as text "{hline 25}{c +}{hline 40}"
 	    
-		display as text %24s "Average Persuation Rate" " {c |}" /*
+		display as text %24s "Average Persuasion Rate" " {c |}" /*
 		*/ as result /*
 		*/ _col(27) %8.0g `lb_coef' " " /*
 		*/ _col(33) %8.0g `ub_coef' " " /*
@@ -399,7 +399,7 @@ program persuasio4ytz, eclass sortpreserve byable(recall)
 		*/ _col(48) "`level'% Conf. Interval" 
         display as text "{hline 25}{c +}{hline 40}"
 	    
-		display as text %24s "Average Persuation Rate" " {c |}" /*
+		display as text %24s "Average Persuasion Rate" " {c |}" /*
 		*/ as result /*
 		*/ _col(27) %8.0g `lb_coef' " " /*
 		*/ _col(33) %8.0g `ub_coef' " " /*

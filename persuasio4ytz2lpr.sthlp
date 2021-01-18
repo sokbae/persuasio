@@ -24,13 +24,13 @@ for binary outcomes {it:y}, binary treaments {it:t} and binary instruments {it:z
 
 {title:Description}
 
-{cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
+{phang}{cmd:persuasio4ytz2lpr} conducts causal inference on causal inference on the local persuasion rate.
 
 {p 4 4 2}
 It is assumed that binary outcomes {it:y}, binary treatments {it:t}, and binary instruments {it:z} are observed. 
 This command is for the case when persuasive treatment ({it:t}) is observed, 
-using estimates of the local persuation rate (LPR) via 
-this package{c 39}s command {cmd:lprlb4ytz}.
+using estimates of the local persuasion rate (LPR) via 
+this package{c 39}s command {cmd:lpr4ytz}.
 
 {p 4 4 2}
 {it:varlist} should include {it:depvar} {it:treatvar} {it:instrvar} {it:covariates} in order. 
@@ -51,7 +51,7 @@ There are two cases: (i) {it:covariates} are absent and (ii) {it:covariates} are
 {break}    2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on {it:z}.
 {break}    3. The LPR is obtained as the ratio.
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 
-{break}    5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
+{p 4 8 2}5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 
 {break}    - With {it:x}, the LPR is defined by 
 
@@ -75,10 +75,10 @@ If {cmd:model}("no_interaction") is selected (default choice),
 {break}    2. The denominator is estimated by regressing (1-{it:y})*(1-{it:t}) on {it:z} and {it:x}.
 {break}    3. The LPR is obtained as the ratio.
 {break}    4. The standard error is computed via STATA command {bf:nlcom}. 	
-{break}    5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
+{p 4 8 2}5. Then, a confidence interval for the LPR is obtained via the usual normal approximation.
 	
 {p 4 4 2}
-Note that in this case, {cmd:LPR}({it:x}) does not depend on {it:x}, because of the linear regression model specification.
+Note that in this case, {cmd:LPR}({it:x}) does not depend on {it:x} because of the linear regression model specification.
 	
 {p 4 4 2}
 Alternatively, if {cmd:model}("interaction") is selected,
