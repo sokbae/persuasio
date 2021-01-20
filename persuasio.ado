@@ -78,7 +78,7 @@ It is recommended to use {cmd:nboot}(#) with # at least 1000.
 A default choice of 50 is meant to check the code initially 
 because it may take a long time to run the bootstrap part.
 The bootstrap confidence interval is based on percentile bootstrap.
-A use of normality-based bootstrap confidence interval is not recommended 
+Normality-based bootstrap confidence interval is not recommended 
 because bootstrap standard errors can be unreasonably large in applications. 
 
 Examples
