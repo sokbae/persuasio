@@ -2,3 +2,6 @@
 *.stpr
 *.paper
 **/to_be_deleted
+*.log
+**/pdfdocs
+**/examples
