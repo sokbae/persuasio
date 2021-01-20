@@ -1,9 +1,7 @@
 clear
 cap log close
 set more off
-
-cd /Users/sokbaelee/Dropbox/Persuasion/STATAcodes/persuasio
-log using persuasio_turnout, replace
+cd /Users/sokbaelee/Dropbox/Persuasion/STATAcode/persuasio
 
 matrix turnout = ///
   ( 0.472, 0.448, 0.279, 0 \ ///
@@ -32,10 +30,12 @@ foreach j of numlist 1/6 {
 
 matrix results = 100*results[2..7,1..4]
 
-frmttable using persuasio_turnout_20201204, statmat(results) tex replace sdec(1) ///
+
+frmttable using "examples/persuasio_turnout_20210120", statmat(results) tex replace sdec(1) ///
 	ctitles("", APR (LB), APR (UB), LPR (LB), LPR (UB) )  ///
 	rtitles("Green and Gerber (2000)" \ "Green, Gerber, and Nickerson (2003)" \ ///
 	"Green and Gerber (2001)" \ "Green and Gerber (2001)" \    ///
 	"Gentzkow (2006)" \ "Gentzkow, Shapiro, and Sinkinson (2011)")  ///
 	title("Persuasion Rates: Papers on Voter Turnout")
 
+exit
