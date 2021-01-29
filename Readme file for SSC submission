@@ -1,0 +1,55 @@
+----------------------------------------------------------------------------
+Readme file for Statistical Software Components (SSC) Archive submission
+----------------------------------------------------------------------------
+
+(1) Name of the Stata package: persuasio
+
+(2) Title line: PERSUASIO: Stata module to estimate the effect of persuasion and conduct inference
+
+(3) Authors: Sung Jae Jun (Penn State University) and Sokbae Lee (Columbia University)
+
+(3) Description of the package (abstract): The stata PERSUASIO command estimates the effect of persuasion and conducts inference, using some of identification results obtained in Jun and Lee (2019, arXiv, https://arxiv.org/abs/1812.02276). 
+
+(4) Language: Stata
+
+(5) Requires: Stata version 14.2
+
+(6) Key Words: Communication, Media, Persuasion, Partial Identification, Treatment Effects
+
+(7) License: GPL-3
+
+(4) Included ado-files (8 files):
+
+- aprlb.ado 
+- aprub.ado 
+- calc4persuasio.ado 
+- lpr4ytz.ado
+- persuasio.ado 
+- persuasio4ytz.ado 
+- persuasio4ytz2lpr.ado
+- persuasio4yz.ado 
+
+(5) Included help files (8 files):
+
+- aprlb.sthlp 
+- aprub.sthlp 
+- calc4persuasio.sthlp 
+- lpr4ytz.sthlp
+- persuasio.sthlp 
+- persuasio4ytz.sthlp 
+- persuasio4ytz2lpr.sthlp
+- persuasio4yz.sthlp 
+
+(6) An example do file and a small dataset (2 files):
+
+- persuasio_example_stj.do
+- GKB_stj.dta
+
+(2) Contact information for inquiries: Sokbae Lee, Department of Economics, Columbia University (email: sl3841@columbia.edu)
+
+(7) URL for the Stata module: https://github.com/sokbae/persuasio
+
+(8) Reference: 
+
+Sung Jae Jun and Sokbae Lee. 2019. Identifying the Effect of Persuasion. https://arxiv.org/abs/1812.02276.
+

@@ -6,5 +6,5 @@ Stata commands are currently under development and a stable version will be post
 
 
 # Reference
-Sung Jae Jun and Sokbae Lee. 2019. Identifying the Effect of Persuasion. https://arxiv.org/abs/2004.08318.
+Sung Jae Jun and Sokbae Lee. 2019. Identifying the Effect of Persuasion. https://arxiv.org/abs/1812.02276.
 
