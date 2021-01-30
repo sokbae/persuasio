@@ -1,1 +1,0 @@
-The auxiliary files should be located in the same directory as Stata ado files. 
