@@ -1,4 +1,4 @@
-# persuasio: : Stata module to estimate the effect of persuasion and conduct inference
+# persuasio: Stata module to estimate the effect of persuasion and conduct inference
 
 - Authors: Sung Jae Jun (Penn State University) and Sokbae Lee (Columbia University)
 
@@ -6,12 +6,11 @@
 
 - License: GPL-3
 
- The stata PERSUASIO command estimates the effect of persuasion and conducts inference, using some of identification results obtained in Jun and Lee (2019, arXiv, https://arxiv.org/abs/1812.02276). 
-
+## Abstract 
 
 This repository contains `persuasio` command that estimates
 the effect of persuasion and conducts inference, using some of identification results obtained in Jun and Lee (2019, arXiv, https://arxiv.org/abs/1812.02276). 
-Stata commands are currently under development and will be posted to the [Statistical Software Components (SSC) archive](https://ideas.repec.org/s/boc/bocode.html) in due course. 
+Stata commands are currently under development and will be posted at the [Statistical Software Components (SSC) archive](https://ideas.repec.org/s/boc/bocode.html) in due course. 
 
 ## Included ado-files (8 files):
 
@@ -39,6 +38,8 @@ Stata commands are currently under development and will be posted to the [Statis
 
 - persuasio_example.do
 - GKB_persuasio.dta
+
+[A draft version of the manual is available in a pdf file](https://github.com/sokbae/persuasio/blob/master/docs/persuasio_stata_manual_30Jan2020.pdf).
 
 # Reference
 Sung Jae Jun and Sokbae Lee. 2019. Identifying the Effect of Persuasion. https://arxiv.org/abs/1812.02276.
