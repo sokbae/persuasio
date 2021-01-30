@@ -4,7 +4,7 @@
 {title:Title}
 
 {phang}{cmd:persuasio4ytz} {hline 2} Conduct causal inference on persuasive effects 
-for binary outcomes {it:y}, binary treaments {it:t} and binary instruments {it:z}
+for binary outcomes {it:y}, binary treatments {it:t} and binary instruments {it:z}
 
 
 {title:Syntax}
@@ -19,7 +19,7 @@ for binary outcomes {it:y}, binary treaments {it:t} and binary instruments {it:z
 {col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
 {col 5}{cmd:method}({it:string}){col 24}Inference method; default is {cmd:method}("normal")
 {col 5}{cmd:nboot}(#){col 24}Perform # bootstrap replications
-{col 5}{cmd:title}({it:string}){col 24}Title of estimation
+{col 5}{cmd:title}({it:string}){col 24}Title
 {space 4}{hline 44}
 
 {title:Description}
@@ -183,7 +183,7 @@ otherwise, the confidence interval will be missing.
 The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
-{cmd:title}({it:string}) specifies the title of estimation.
+{cmd:title}({it:string}) specifies a title.
 
 
 {title:Remarks}
@@ -261,6 +261,12 @@ GPL-3
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 {browse "https://arxiv.org/abs/1812.02276":arXiv:1812.02276 [econ.EM]} 
+
+
+{title:Version}
+
+{p 4 4 2}
+0.1.0 30 January 2021
 
 
 

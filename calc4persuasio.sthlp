@@ -4,7 +4,7 @@
 {title:Title}
 
 {phang}{cmd:calc4persuasio} {hline 2} Calculate the effect of persuasion when 
-information on Pr(y=1|z) and/or Pr(t=1|z) for each z=0,1 is available
+information on Pr(y=1|z) and optimally Pr(t=1|z) for each z=0,1 is available
 
 
 {title:Syntax}
@@ -16,7 +16,7 @@ information on Pr(y=1|z) and/or Pr(t=1|z) for each z=0,1 is available
 
 {p 4 4 2}
 {bf:calc4persuasio} calculates the effect of persuasion when 
-information on Pr(y=1|z) and/or Pr(t=1|z) for each z=0,1 is available.
+information on Pr(y=1|z) and optimally Pr(t=1|z) for each z=0,1 is available.
 The inputs to this command are {it:y1}, {it:y0}, {it:e1} and {it:e0}. They are all scalars
 and refer to the estimates of Pr({it:y}=1|{it:z}=1), Pr({it:y}=1|{it:z}=0),
 Pr({it:t}=1|{it:z}=1), and Pr({it:t}=1|{it:z}=0), where ({it:y}, {it:t}, {it:z})
@@ -129,6 +129,12 @@ GPL-3
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 {browse "https://arxiv.org/abs/1812.02276":arXiv:1812.02276 [econ.EM]} 
+
+
+{title:Version}
+
+{p 4 4 2}
+0.1.0 30 January 2021
 
 
 

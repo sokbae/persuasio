@@ -18,7 +18,7 @@ Syntax
 | {cmd:model}(_string_)   | Regression model when _covariates_ are present |
 | {cmd:method}(_string_) | Inference method; default is {cmd:method}("normal")    |
 | {cmd:nboot}(#) | Perform # bootstrap replications |
-| {cmd:title}(_string_) | Title of estimation     |
+| {cmd:title}(_string_) | Title     |
 
 Description
 -----------
@@ -27,7 +27,7 @@ Description
 
 It is assumed that binary outcomes _y_ and binary instruments _z_ are observed. 
 This command is for the case when persuasive treatment (_t_) is unobserved, 
-using an estimate of the lower bound on the average persuation rate (APR) via 
+using an estimate of the lower bound on the average persuasion rate (APR) via 
 this package's command {cmd:aprlb}.
 
 _varlist_ should include _depvar_ _instrvar_ _covariates_ in order. Here, _depvar_ is binary outcomes (_y_), _instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
@@ -110,7 +110,7 @@ otherwise, the confidence interval will be missing.
 The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
-{cmd:title}(_string_) specifies the title of estimation.
+{cmd:title}(_string_) specifies a title.
 
 Remarks
 -------
@@ -175,6 +175,11 @@ References
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 [arXiv:1812.02276 [econ.EM]](https://arxiv.org/abs/1812.02276) 
+
+Version
+-------
+
+0.1.0 30 January 2021
 
 ***/
 capture program drop persuasio4yz

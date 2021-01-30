@@ -15,13 +15,13 @@ Syntax
 | _option_          | _Description_           | 
 |-------------------|-------------------------|
 | {cmd:model}(_string_)   | Regression model when _covariates_ are present |
-| {cmd:title}(_string_)   | Title of estimation     |
+| {cmd:title}(_string_)   | Title      |
 
 
 Description
 -----------
 
-__aprub__ estimates the upper bound on the average persuation rate (APR).
+__aprub__ estimates the upper bound on the average persuasion rate (APR).
 _varlist_ should include _depvar_ _treatrvar_ _instrvar_ _covariates_ in order.
 Here, _depvar_ is binary outcomes (_y_), _treatrvar_ is binary treatment (_t_), 
 _instrvar_ is binary instruments (_z_), and _covariates_ (_x_) are optional. 
@@ -81,7 +81,7 @@ either {it:A} or {it:B}.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
-{cmd:title}(_string_) specifies the title of estimation.
+{cmd:title}(_string_) specifies a title.
 
 Remarks
 -------
@@ -154,6 +154,11 @@ References
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 [arXiv:1812.02276 [econ.EM]](https://arxiv.org/abs/1812.02276) 
+
+Version
+-------
+
+0.1.0 30 January 2021
 
 ***/
 capture program drop aprub

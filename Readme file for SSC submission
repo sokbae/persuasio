@@ -1,6 +1,8 @@
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------------
 Readme file for Statistical Software Components (SSC) Archive submission
-----------------------------------------------------------------------------
+Date: 30 January 2021
+Contact information: Sokbae Lee, Columbia University, email: sl3841@columbia.edu
+---------------------------------------------------------------------------------
 
 (1) Name of the Stata package: persuasio
 
@@ -14,7 +16,7 @@ Readme file for Statistical Software Components (SSC) Archive submission
 
 (5) Requires: Stata version 14.2
 
-(6) Key Words: Communication, Media, Persuasion, Partial Identification, Treatment Effects
+(6) Key Words: persuasio, Communication, Media, Persuasion, Partial Identification, Treatment Effects
 
 (7) License: GPL-3
 
@@ -42,8 +44,8 @@ Readme file for Statistical Software Components (SSC) Archive submission
 
 (6) An example do file and a small dataset (2 files):
 
-- persuasio_example_stj.do
-- GKB_stj.dta
+- persuasio_example.do
+- GKB_persuasio.dta
 
 (2) Contact information for inquiries: Sokbae Lee, Department of Economics, Columbia University (email: sl3841@columbia.edu)
 

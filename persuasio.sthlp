@@ -22,7 +22,7 @@
 {col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
 {col 5}{cmd:method}({it:string}){col 24}Inference method; default is {cmd:method}("normal")
 {col 5}{cmd:nboot}(#){col 24}Perform # bootstrap replications
-{col 5}{cmd:title}({it:string}){col 24}Title of estimation
+{col 5}{cmd:title}({it:string}){col 24}Title
 {space 4}{hline 44}
 
 {title:Description}
@@ -71,7 +71,7 @@ otherwise, the confidence interval will be missing.
 The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
-{cmd:title}({it:string}) specifies the title of estimation.
+{cmd:title}({it:string}) specifies a title.
 
 {p 4 4 2}
 All these options are irrelevant for subcommands {cmd:calc}. 
@@ -109,7 +109,7 @@ The second example conducts inference on LPR when y,t,z are observed.
 		. persuasio lpr voteddem_all readsome post, level(80) method("normal")
 		
 {p 4 4 2}
-The third example conducts bootstrap iinference on APR and LPR when y,z are observed with a covariate, MZwave2, interacting with the instrument, post. 
+The third example conducts bootstrap inference on APR and LPR when y,z are observed with a covariate, MZwave2, interacting with the instrument, post. 
 		
 {p 4 4 2}
 		. persuasio yz voteddem_all post MZwave2, level(80) model("interaction") method("bootstrap") nboot(1000)	
@@ -163,6 +163,12 @@ GPL-3
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 {browse "https://arxiv.org/abs/1812.02276":arXiv:1812.02276 [econ.EM]} 
+
+
+{title:Version}
+
+{p 4 4 2}
+0.1.0 30 January 2021
 
 
 

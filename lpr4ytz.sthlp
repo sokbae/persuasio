@@ -15,7 +15,7 @@
 {col 5}{it:option}{col 24}{it:Description}
 {space 4}{hline 44}
 {col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
-{col 5}{cmd:title}({it:string}){col 24}Title of estimation
+{col 5}{cmd:title}({it:string}){col 24}Title
 {space 4}{hline 44}
 
 
@@ -95,7 +95,7 @@ This option is only relevant when {it:x} is present.
 The default option is "no_interaction" between {it:z} and {it:x}. 
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed.
 
-{cmd:title}({it:string}) specifies the title of estimation.
+{cmd:title}({it:string}) specifies a title.
 
 
 {title:Remarks}
@@ -180,6 +180,12 @@ GPL-3
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 {browse "https://arxiv.org/abs/1812.02276":arXiv:1812.02276 [econ.EM]} 
+
+
+{title:Version}
+
+{p 4 4 2}
+0.1.0 30 January 2021
 
 
 

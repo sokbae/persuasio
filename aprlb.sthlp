@@ -15,14 +15,14 @@
 {col 5}{it:option}{col 24}{it:Description}
 {space 4}{hline 44}
 {col 5}{cmd:model}({it:string}){col 24}Regression model when {it:covariates} are present
-{col 5}{cmd:title}({it:string}){col 24}Title of estimation
+{col 5}{cmd:title}({it:string}){col 24}Title
 {space 4}{hline 44}
 
 
 {title:Description}
 
 {p 4 4 2}
-{bf:aprlb} estimates the lower bound on the average persuation rate (APR).
+{bf:aprlb} estimates the lower bound on the average persuasion rate (APR).
 {it:varlist} should include {it:depvar} {it:instrvar} {it:covariates} in order.
 Here, {it:depvar} is binary outcomes ({it:y}), {it:instrvar} is binary instruments ({it:z}), 
 and {it:covariates} ({it:x}) are optional. 
@@ -85,7 +85,7 @@ The default option is "no_interaction" between {it:z} and {it:x}.
 When "interaction" is selected, full interactions between {it:z} and {it:x} are allowed; 
 this is accomplished by estimating Pr({it:y}=1|{it:z}=1,{it:x}) and Pr({it:y}=1|{it:z}=0,{it:x}), separately.
 
-{cmd:title}({it:string}) specifies the title of estimation.
+{cmd:title}({it:string}) specifies a title.
 
 
 {title:Remarks}
@@ -168,6 +168,12 @@ GPL-3
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 {browse "https://arxiv.org/abs/1812.02276":arXiv:1812.02276 [econ.EM]} 
+
+
+{title:Version}
+
+{p 4 4 2}
+0.1.0 30 January 2021
 
 
 

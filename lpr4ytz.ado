@@ -15,7 +15,7 @@ Syntax
 | _option_          | _Description_           | 
 |-------------------|-------------------------|
 | {cmd:model}(_string_)   | Regression model when _covariates_ are present |
-| {cmd:title}(_string_)   | Title of estimation     |
+| {cmd:title}(_string_)   | Title     |
 
 
 Description
@@ -84,7 +84,7 @@ This option is only relevant when _x_ is present.
 The default option is "no_interaction" between _z_ and _x_. 
 When "interaction" is selected, full interactions between _z_ and _x_ are allowed.
 
-{cmd:title}(_string_) specifies the title of estimation.
+{cmd:title}(_string_) specifies a title.
 
 Remarks
 -------
@@ -156,6 +156,11 @@ References
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 [arXiv:1812.02276 [econ.EM]](https://arxiv.org/abs/1812.02276) 
+
+Version
+-------
+
+0.1.0 30 January 2021
 
 ***/
 capture program drop lpr4ytz

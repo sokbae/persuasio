@@ -21,7 +21,7 @@ Syntax
 | {cmd:model}(_string_)   | Regression model when _covariates_ are present |
 | {cmd:method}(_string_) | Inference method; default is {cmd:method}("normal")    |
 | {cmd:nboot}(#) | Perform # bootstrap replications |
-| {cmd:title}(_string_) | Title of estimation     |
+| {cmd:title}(_string_) | Title      |
 
 Description
 -----------
@@ -67,7 +67,7 @@ otherwise, the confidence interval will be missing.
 The default option is {cmd:nboot}(50).
 It is only relevant when {cmd:method}("bootstrap") is selected.
 
-{cmd:title}(_string_) specifies the title of estimation.
+{cmd:title}(_string_) specifies a title.
 
 All these options are irrelevant for subcommands {cmd:calc}. 
 
@@ -96,7 +96,7 @@ The second example conducts inference on LPR when y,t,z are observed.
 		
 		. persuasio lpr voteddem_all readsome post, level(80) method("normal")
 		
-The third example conducts bootstrap iinference on APR and LPR when y,z are observed with a covariate, MZwave2, interacting with the instrument, post. 
+The third example conducts bootstrap inference on APR and LPR when y,z are observed with a covariate, MZwave2, interacting with the instrument, post. 
 		
 		. persuasio yz voteddem_all post MZwave2, level(80) model("interaction") method("bootstrap") nboot(1000)	
 
@@ -141,6 +141,11 @@ References
 Sung Jae Jun and Sokbae Lee (2019), 
 Identifying the Effect of Persuasion, 
 [arXiv:1812.02276 [econ.EM]](https://arxiv.org/abs/1812.02276) 
+
+Version
+-------
+
+0.1.0 30 January 2021
 
 ***/
 capture program drop persuasio
