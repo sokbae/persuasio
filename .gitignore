@@ -5,4 +5,4 @@
 *.log
 **/pdfdocs
 **/examples
-**/aux_files
+**/auxfiles
