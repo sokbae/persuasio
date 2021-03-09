@@ -10,7 +10,11 @@
 
 This repository contains `persuasio` command that estimates
 the effect of persuasion and conducts inference, using some of identification results obtained in Jun and Lee (2019, arXiv, https://arxiv.org/abs/1812.02276). 
-Stata commands are currently under development and will be posted at the [Statistical Software Components (SSC) archive](https://ideas.repec.org/s/boc/bocode.html) in due course. 
+Stata commands are posted at the [Statistical Software Components (SSC) archive](https://ideas.repec.org/c/boc/bocode/s458902.html). 
+
+## Installation
+
+The Stata module `persuasio` should be installed from within Stata by typing `ssc install persuasio`.
 
 ## Included ado-files (8 files):
 
