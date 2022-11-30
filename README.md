@@ -6,6 +6,10 @@
 
 - License: GPL-3
 
+## News (November 30, 2022)
+
+This repository is out of date. An updated version of `persuasio` is available at <https://github.com/persuasio/persuasio-stata>.
+
 ## Abstract 
 
 This repository contains `persuasio` command that estimates
